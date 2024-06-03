@@ -18,8 +18,15 @@
   },
   "homepage": "https://github.com/YashZinzuwadia2024/Health-and-Wellness-Management-System#readme",
   "dependencies": {
+    "axios": "^1.7.2",
+    "bcrypt": "^5.1.1",
+    "bootstrap": "^5.3.3",
+    "bootstrap-icons": "^1.11.3",
     "dotenv": "^16.4.5",
+    "ejs": "^3.1.10",
     "express": "^4.19.2",
+    "express-session": "^1.18.0",
+    "node-notifier": "^10.0.1",
     "sequelize": "^6.37.3"
   },
   "devDependencies": {
