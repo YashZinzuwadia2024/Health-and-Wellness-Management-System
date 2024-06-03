@@ -42,7 +42,7 @@ module.exports = {
                     model: db.medications,
                     as: 'medications',
                     attributes: {
-                        exclude: ['id', 'createdAt', 'updatedAt', 'deletedAt', 'user_id','medication_details_id']
+                        exclude: ['id', 'createdAt', 'updatedAt', 'deletedAt', 'user_id', 'medication_details_id']
                     },
                     include: [{
                         model: db.medication_details,
@@ -53,18 +53,13 @@ module.exports = {
                     }]
                 }]
             });
-            let updatedMedications = medications.map(medication => {
-                let { details } = medication;
-                delete medication.details;
-                medication.start_date = details.start_date;
-                medication.end_date = details.end_date;
-                medication.time = details.time;
-                medication.day = details.day;
-                medication.isDone = details.isDone;
+            medications.forEach(medication => {
+                if (typeof medication.details === 'object' && medication.details !== null) {
+                    Object.assign(medication, medication.details);
+                    delete medication.details;
+                }
             });
-            // console.log(updatedMedications);
-            // return res.json(medications);
-            return res.status(200).json(updatedMedications);
+            return res.status(200).json(medications);
         } catch (error) {
             console.log(error);
             return res.status(500).json({ message: "Somthing went wrong!" });

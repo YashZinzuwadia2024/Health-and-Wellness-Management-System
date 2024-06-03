@@ -10,7 +10,7 @@ const sessionChecker = async (req, res, next) => {
             title: "Session",
             message: "Session Timed Out..Login Again!!"
         });
-        return res.redirect('/login');
+        return res.redirect('/');
     }
 }
 
