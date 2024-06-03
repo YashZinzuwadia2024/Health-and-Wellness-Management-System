@@ -8,7 +8,8 @@ module.exports = (sequelize, DataTypes) => {
       medications.belongsTo(models.users, {
         foreignKey: "user_id"
       });
-      medications.hasOne(models.medication_details, {
+      medications.belongsTo(models.medication_details, {
+        as: 'details',
         foreignKey: "medication_details_id"
       });
     }
