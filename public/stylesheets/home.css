@@ -11,7 +11,7 @@ body {
     display: flex;
     flex-direction: column;
     justify-content: center;
-    background-color: rgb(219, 219, 219);
+    background-color: rgb(100, 100, 223);
 }
 
 .navbar {
@@ -70,4 +70,66 @@ body {
     display: flex;
     flex-direction: column;
     gap: 0;
+}
+
+.main_container {
+    margin-top: 25px;
+}
+
+.main_container .cards {
+    display: grid;
+    justify-items: center;
+    grid-template-columns: repeat(2, 1fr);
+}
+
+.main_container .cards .card {
+    height: fit-content;
+    min-width: 400px;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 45px;
+}
+
+.card .heading {
+    display: flex;
+    gap: 15px;
+    align-items: center;
+    border-bottom: 1px solid #ccc;
+}
+
+.heading i {
+    font-size: 30px;
+}
+
+.card p {
+    font-size: 30px;
+    text-align: center;
+}
+
+.card .action {
+    display: flex;
+    gap: 15px;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto;
+    background-color: rgb(100, 100, 223);
+    width: fit-content;
+    padding: 10px 20px;
+    color: #fff;
+    cursor: pointer;
+    transition: 200ms all;
+}
+
+.card .action a {
+    text-decoration: none;
+    color: #fff;
+}
+
+.card .action:hover{
+    opacity: 0.6;
+}
+
+.card .action:active {
+    transform: scale(0.8);
 }
