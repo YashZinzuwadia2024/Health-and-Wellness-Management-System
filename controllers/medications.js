@@ -1,5 +1,6 @@
 const db = require("../models/index");
 const emailQueue = require("../services/producer");
+const cron = require("node-cron");
 
 module.exports = {
     getCountOfMeds: async (req, res) => {
@@ -9,7 +10,6 @@ module.exports = {
                     user_id: req.session.profile.id
                 }
             });
-
             return res.status(200).json({ count: data.count });
         } catch (error) {
             console.log(error);
