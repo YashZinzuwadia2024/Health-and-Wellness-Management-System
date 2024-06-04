@@ -30,16 +30,21 @@ const getdata = async () => {
     });
     let finalData = [];
     updatedMedications.map(medication => {
-        let newObj = {
-            medicine_name: medication.medicine_name,
-            description: medication.description,
-            start_date: medication.start_date,
-            end_date: medication.end_date,
-            time: medication.time,
-            day: medication.day,
-            ...medication.medication_type
-        };
-        finalData.push(newObj);
+        if (medication.medication_type === null) {
+            finalData.push(medication);
+        }
+        else {
+            let newObj = {
+                medicine_name: medication.medicine_name,
+                description: medication.description,
+                start_date: medication.start_date,
+                end_date: medication.end_date,
+                time: medication.time,
+                day: medication.day,
+                ...medication.medication_type
+            };
+            finalData.push(newObj);
+        }
     });
     insertHeadings(finalData[0]);
     insertData(finalData);
