@@ -3,7 +3,7 @@
     border-radius: 12px;
     padding: 20px;
     margin-top: 25px;
-    min-height: 600px;
+    min-height: 500px;
     display: flex;
     flex-direction: column;
     gap: 35px;
@@ -13,6 +13,10 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
+}
+
+.heading h2 {
+    margin-bottom: 0;
 }
 
 .heading .add {
@@ -45,4 +49,142 @@
 
 .heading .add p {
     font-size: 20px;
+}
+
+.modal_heading {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    border-bottom: 1px solid #ccc;
+    padding-bottom: 10px;
+}
+
+.modal_heading i {
+    font-size: 22px;
+}
+
+.overlay-container {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.6);
+    justify-content: center;
+    align-items: center;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.popup-box {
+    background: #fff;
+    padding: 24px;
+    border-radius: 12px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.4);
+    text-align: center;
+    min-width: 700px;
+    max-height: 550px;
+    overflow-y: scroll;
+    opacity: 0;
+    transform: scale(0.8);
+    animation: fadeInUp 0.5s ease-out forwards;
+    display: flex;
+    flex-direction: column;
+    gap: 35px;
+}
+
+.form-container {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.type_select {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.type_select p {
+    text-align: start;
+    margin-bottom: 0;
+}
+
+.radio_inputs {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.fields {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+}
+
+.field {
+    display: flex;
+    flex-direction: column;
+}
+
+.form-label {
+    margin-bottom: 10px;
+    font-size: 16px;
+    color: #444;
+    text-align: left;
+}
+
+.form-input {
+    outline: none;
+    padding: 10px;
+    margin-bottom: 20px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    font-size: 16px;
+    box-sizing: border-box;
+}
+
+.btn-submit,
+.btn-close-popup {
+    padding: 12px 24px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.btn-submit {
+    background-color: rgb(100, 100, 223);
+    color: #fff;
+    transition: 0.4s opacity;
+}
+
+.btn-close-popup {
+    margin-top: 12px;
+    background-color: #e74c3c;
+    color: #fff;
+    transition: 0.4s opacity;
+}
+
+.btn-submit:hover,
+.btn-close-popup:hover {
+    opacity: 0.8;
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.overlay-container.show {
+    display: flex;
+    opacity: 1;
 }

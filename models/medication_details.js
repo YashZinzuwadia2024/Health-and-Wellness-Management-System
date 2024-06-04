@@ -9,7 +9,7 @@ module.exports = (sequelize, DataTypes) => {
         as: 'details',
         foreignKey: "medication_details_id"
       });
-      medication_details.hasOne(models.medication_types, {
+      medication_details.belongsTo(models.medication_types, {
         foreignKey: "type_id"
       });
     }
