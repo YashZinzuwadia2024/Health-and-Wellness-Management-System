@@ -1,4 +1,5 @@
 const db = require("../models/index");
+const emailQueue = require("../services/producer");
 
 module.exports = {
     getCountOfMeds: async (req, res) => {
