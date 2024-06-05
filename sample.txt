@@ -1,0 +1,161 @@
+Implementing "logout from all devices" and "logout from other devices" in an Express.js application using JWT involves managing the tokens issued to users and providing mechanisms to invalidate them. Here’s a step-by-step guide to implement these features:
+
+### 1. Setup Express.js and JWT
+
+First, ensure you have the necessary packages installed:
+
+```bash
+npm install express jsonwebtoken
+```
+
+### 2. Middleware for JWT Authentication
+
+Create middleware to authenticate requests using JWT:
+
+```javascript
+const jwt = require('jsonwebtoken');
+
+const authenticateToken = (req, res, next) => {
+    const token = req.header('Authorization')?.split(' ')[1];
+    if (!token) return res.sendStatus(401);
+
+    jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, user) => {
+        if (err) return res.sendStatus(403);
+        req.user = user;
+        next();
+    });
+};
+
+module.exports = authenticateToken;
+```
+
+### 3. Token Blacklist for Logout
+
+To manage the invalidation of tokens, use a blacklist. This can be implemented using an in-memory store like Redis or simply an array for simplicity (not recommended for production):
+
+```javascript
+const tokenBlacklist = new Set();
+
+// Add token to blacklist
+const addToBlacklist = (token) => {
+    tokenBlacklist.add(token);
+};
+
+// Check if token is blacklisted
+const isBlacklisted = (token) => {
+    return tokenBlacklist.has(token);
+};
+```
+
+### 4. Middleware to Check Blacklisted Tokens
+
+Enhance the `authenticateToken` middleware to check for blacklisted tokens:
+
+```javascript
+const authenticateToken = (req, res, next) => {
+    const token = req.header('Authorization')?.split(' ')[1];
+    if (!token) return res.sendStatus(401);
+
+    if (isBlacklisted(token)) return res.sendStatus(403);
+
+    jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, user) => {
+        if (err) return res.sendStatus(403);
+        req.user = user;
+        next();
+    });
+};
+```
+
+### 5. Logout from Current Device
+
+Implement a route to logout from the current device by blacklisting the token:
+
+```javascript
+app.post('/logout', authenticateToken, (req, res) => {
+    const token = req.header('Authorization')?.split(' ')[1];
+    addToBlacklist(token);
+    res.sendStatus(204);
+});
+```
+
+### 6. Logout from All Devices
+
+To log out from all devices, you can implement a token versioning system by storing a token version in the JWT payload and in the user database. Invalidate tokens by incrementing this version.
+
+#### Updating User Model to Include Token Version:
+
+```javascript
+// Assuming a User model with a tokenVersion field
+const User = require('./models/User');
+```
+
+#### Generating Token with Version:
+
+```javascript
+const generateAccessToken = (user) => {
+    return jwt.sign({ id: user.id, tokenVersion: user.tokenVersion }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '15m' });
+};
+```
+
+#### Checking Token Version in Middleware:
+
+```javascript
+const authenticateToken = async (req, res, next) => {
+    const token = req.header('Authorization')?.split(' ')[1];
+    if (!token) return res.sendStatus(401);
+
+    if (isBlacklisted(token)) return res.sendStatus(403);
+
+    jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, async (err, user) => {
+        if (err) return res.sendStatus(403);
+        
+        const dbUser = await User.findById(user.id);
+        if (user.tokenVersion !== dbUser.tokenVersion) return res.sendStatus(403);
+        
+        req.user = user;
+        next();
+    });
+};
+```
+
+#### Implementing Logout from All Devices:
+
+```javascript
+app.post('/logout-all', authenticateToken, async (req, res) => {
+    const user = await User.findById(req.user.id);
+    user.tokenVersion += 1;
+    await user.save();
+    res.sendStatus(204);
+});
+```
+
+### 7. Logout from Other Devices
+
+To log out from other devices but keep the current session active, you need to differentiate the current token and invalidate all others:
+
+#### Implementing Logout from Other Devices:
+
+```javascript
+app.post('/logout-others', authenticateToken, async (req, res) => {
+    const user = await User.findById(req.user.id);
+    const currentToken = req.header('Authorization')?.split(' ')[1];
+
+    user.tokenVersion += 1;
+    await user.save();
+
+    // Blacklist the new token temporarily
+    addToBlacklist(currentToken);
+
+    // Generate a new token for the current session
+    const newToken = generateAccessToken(user);
+    
+    // Remove current token from blacklist
+    tokenBlacklist.delete(currentToken);
+    
+    res.json({ token: newToken });
+});
+```
+
+### Conclusion
+
+These steps should help you implement logout functionality from all devices and other devices in an Express.js application using JWT. For production, consider using a more robust solution for managing token blacklists, such as Redis, to handle the scalability and persistence of token invalidation.

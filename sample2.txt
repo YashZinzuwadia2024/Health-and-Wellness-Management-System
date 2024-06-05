@@ -1,0 +1,224 @@
+Sure! Here’s a detailed implementation of logging out from all devices, logging out from other devices, and logging out from the current device in an Express.js application using JWT and Redis.
+
+### 1. Setup Express.js with JWT and Redis
+
+First, install the necessary packages if you haven't already:
+
+```bash
+npm install express jsonwebtoken redis dotenv bcrypt
+```
+
+### 2. Environment Variables
+
+Create a `.env` file to store your environment variables:
+
+```
+ACCESS_TOKEN_SECRET=your_secret_key
+REDIS_URL=your_redis_url
+```
+
+### 3. Setting Up Redis
+
+Configure Redis to store tokens:
+
+```javascript
+// config/redis.js
+const redis = require('redis');
+const client = redis.createClient({ url: process.env.REDIS_URL });
+
+client.on('error', (err) => {
+    console.error('Redis error:', err);
+});
+
+client.connect();
+
+module.exports = client;
+```
+
+### 4. JWT Authentication Middleware
+
+Create a middleware to authenticate requests using JWT and check token validity in Redis:
+
+```javascript
+// middleware/authenticateToken.js
+const jwt = require('jsonwebtoken');
+const redisClient = require('../config/redis');
+
+const authenticateToken = async (req, res, next) => {
+    const token = req.header('Authorization')?.split(' ')[1];
+    if (!token) return res.sendStatus(401);
+
+    try {
+        const user = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
+
+        const isBlacklisted = await redisClient.get(`blacklist_${user.id}_${user.tokenVersion}`);
+        if (isBlacklisted) return res.sendStatus(403);
+
+        req.user = user;
+        req.token = token;
+        next();
+    } catch (err) {
+        res.sendStatus(403);
+    }
+};
+
+module.exports = authenticateToken;
+```
+
+### 5. Generate JWT Token
+
+Function to generate a JWT token with a token version:
+
+```javascript
+// utils/tokenUtils.js
+const jwt = require('jsonwebtoken');
+
+const generateAccessToken = (user) => {
+    return jwt.sign({ id: user.id, tokenVersion: user.tokenVersion }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '15m' });
+};
+
+module.exports = { generateAccessToken };
+```
+
+### 6. Express Routes
+
+Set up the Express routes, including the login, logout-all, logout-others, and logout (current device) routes:
+
+```javascript
+// app.js
+const express = require('express');
+const bcrypt = require('bcrypt');
+const authenticateToken = require('./middleware/authenticateToken');
+const User = require('./models/user');
+const { generateAccessToken } = require('./utils/tokenUtils');
+const redisClient = require('./config/redis');
+
+const app = express();
+
+app.use(express.json());
+
+app.post('/login', async (req, res) => {
+    const { username, password } = req.body;
+    const user = await User.findOne({ where: { username } });
+
+    if (user && bcrypt.compareSync(password, user.password)) {
+        const token = generateAccessToken(user);
+        res.json({ token });
+    } else {
+        res.sendStatus(401);
+    }
+});
+
+app.post('/logout-all', authenticateToken, async (req, res) => {
+    try {
+        const user = await User.findByPk(req.user.id);
+        if (!user) return res.sendStatus(404);
+
+        user.tokenVersion += 1;
+        await user.save();
+
+        await redisClient.set(`blacklist_${user.id}_${user.tokenVersion - 1}`, true);
+
+        res.sendStatus(204);
+    } catch (error) {
+        res.status(500).json({ error: 'Internal server error' });
+    }
+});
+
+app.post('/logout-others', authenticateToken, async (req, res) => {
+    try {
+        const user = await User.findByPk(req.user.id);
+        if (!user) return res.sendStatus(404);
+
+        user.tokenVersion += 1;
+        await user.save();
+
+        const newToken = generateAccessToken(user);
+
+        await redisClient.set(`blacklist_${user.id}_${req.user.tokenVersion}`, true);
+
+        res.json({ token: newToken });
+    } catch (error) {
+        res.status(500).json({ error: 'Internal server error' });
+    }
+});
+
+app.post('/logout', authenticateToken, async (req, res) => {
+    try {
+        const user = await User.findByPk(req.user.id);
+        if (!user) return res.sendStatus(404);
+
+        await redisClient.set(`blacklist_${user.id}_${req.user.tokenVersion}`, true);
+
+        res.sendStatus(204);
+    } catch (error) {
+        res.status(500).json({ error: 'Internal server error' });
+    }
+});
+
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+    console.log(`Server running on port ${PORT}`);
+});
+```
+
+### 7. Sequelize User Model
+
+Ensure you have a Sequelize user model with a `tokenVersion` field:
+
+```javascript
+// models/user.js
+const { DataTypes } = require('sequelize');
+const sequelize = require('../config/database');
+
+const User = sequelize.define('User', {
+    username: {
+        type: DataTypes.STRING,
+        allowNull: false,
+        unique: true,
+    },
+    password: {
+        type: DataTypes.STRING,
+        allowNull: false,
+    },
+    tokenVersion: {
+        type: DataTypes.INTEGER,
+        defaultValue: 0,
+    },
+});
+
+module.exports = User;
+```
+
+### 8. Sync Database and Start Server
+
+Ensure your database is synced and the server is started:
+
+```javascript
+// server.js
+const sequelize = require('./config/database');
+const User = require('./models/user');
+
+(async () => {
+    try {
+        await sequelize.authenticate();
+        console.log('Connection has been established successfully.');
+
+        await sequelize.sync(); // Use { force: true } only in development
+        console.log('Database synchronized.');
+
+        const app = require('./app'); // Adjust the path to your main Express app file
+
+        const PORT = process.env.PORT || 3000;
+        app.listen(PORT, () => {
+            console.log(`Server running on port ${PORT}`);
+        });
+    } catch (error) {
+        console.error('Unable to connect to the database:', error);
+    }
+})();
+```
+
+### Conclusion
+
+This setup provides a comprehensive solution for logging out from all devices, logging out from other devices, and logging out from the current device in an Express.js application using JWT and Redis. The `tokenVersion` field in the user model is used to manage token invalidation, while Redis is used to store blacklisted tokens to ensure they cannot be used for authentication.
