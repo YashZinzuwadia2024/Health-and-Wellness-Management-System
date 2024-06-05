@@ -1,4 +1,5 @@
 const nodemailer = require('nodemailer');
+require("dotenv").config();
 
 const transporter = nodemailer.createTransport({
     service: 'gmail',
@@ -10,14 +11,15 @@ const transporter = nodemailer.createTransport({
 
 const sendMail = (user, medication_details) => {
     try {
+        const { medicine_name, description } = medication_details;
         const mailOptions = {
-            from: 'youremail@gmail.com',
+            from: process.env.TRANSPORTER,
             to: user,
             subject: 'Sending Email using Node.js',
             html: `
                 <form action="http://localhost:3500/markAsDone" method="post">
-                    <h3 id="medicine_name"></h3>
-                    <p id="description"></p>
+                    <h3 id="medicine_name">It's time to take ${medicine_name}</h3>
+                    <p id="description">${description}</p>
                     <label for="markAsDone">Confirm Once!!</label>
                     <input type="checkbox" name="markAsDone" id="markAsDone">
                     <input type="submit" value="Submit">

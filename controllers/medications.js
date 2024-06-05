@@ -1,6 +1,7 @@
 const db = require("../models/index");
 const emailQueue = require("../services/producer");
 const cron = require("node-cron");
+const moment = require("moment");
 
 module.exports = {
     getCountOfMeds: async (req, res) => {
@@ -66,6 +67,7 @@ module.exports = {
     },
     addMedication: async (req, res) => {
         try {
+            const now = moment();
             const { type,
                 medicine_name,
                 description,
@@ -81,12 +83,20 @@ module.exports = {
                     time: time
                 });
                 const { id } = new_medication_details;
-                console.log(id);
                 const new_medication = await db.medications.create({
                     medicine_name: medicine_name,
                     description: description,
                     user_id: req.session.profile.id,
                     medication_details_id: id
+                });
+                const specific_time = moment(`${new_medication_details.start_date} ${new_medication_details.time}`)
+                await emailQueue.add("email", {
+                    medicine_name: medicine_name,
+                    description: description
+                }, {
+                    delay: specific_time - now,
+                    removeOnComplete: true,
+                    removeOnFail: true
                 });
                 return res.status(200).json({ new_medication: new_medication, success: true });
             } else if (type === 'Recurring') {
