@@ -20,6 +20,11 @@ module.exports = (sequelize, DataTypes) => {
       primaryKey: true,
       type: DataTypes.INTEGER
     },
+    notification_date: {
+      allowNull: false,
+      type: DataTypes.DATE,
+      defaultValue: moment().format("YYYY-MM-DD")
+    },
     status: {
       allowNull: false,
       defaultValue: 0,

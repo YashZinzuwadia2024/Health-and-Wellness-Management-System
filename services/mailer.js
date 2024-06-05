@@ -1,5 +1,6 @@
 const nodemailer = require('nodemailer');
 require("dotenv").config();
+const db = require("../models/index");
 
 const transporter = nodemailer.createTransport({
     service: 'gmail',
@@ -26,10 +27,13 @@ const sendMail = (user, medication_details) => {
                 </form>
             `
         };
-        transporter.sendMail(mailOptions, (error, info) => {
+        transporter.sendMail(mailOptions, async (error, info) => {
             if (error) {
                 console.log(error);
             } else {
+                await db.medication_status.create({
+                    status: 0
+                })
                 console.log('Email sent: ' + info.response);
             }
         });
