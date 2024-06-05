@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -11,27 +12,65 @@
     <link rel="stylesheet" href="/stylesheets/medications.css">
     <title>Health & Wellness Management System | Medications</title>
 </head>
+
 <body>
+    <header class="navbar">
+        <div class="logo">
+            <h3>WeCare!</h3>
+        </div>
+        <div class="actions">
+            <%= `Hi ${name.toUpperCase()}` %>
+                <div class="dropdown">
+                    <i class="bi bi-box-arrow-right"></i>
+                    <div class="dropdown-content">
+                        <p onclick="logout()">Logout</p>
+                        <p>Logout from other devices</p>
+                        <p>Logout from all devices</p>
+                    </div>
+                </div>
+        </div>
+    </header>
     <div class="container">
         <div class="heading">
             <h2>Medications</h2>
-            <div class="add">
+            <div class="add" onclick="togglePopup()">
                 <i class="bi bi-plus-circle"></i>
                 <p>Add</p>
             </div>
         </div>
         <table class="table table-hover table-light" id="medication_table">
             <thead>
-              <tr id="headerRow">
-              </tr>
+                <tr id="headerRow">
+                </tr>
             </thead>
             <tbody id="data_rows"></tbody>
-          </table>
+        </table>
     </div>
+
+    <div id="popupOverlay" class="overlay-container">
+        <div class="popup-box">
+            <div class="modal_heading">
+                <i class="bi bi-capsule"></i>
+                <h5>Add Medication</h2>
+            </div>
+            <form class="form-container" id="main_form">
+            </form>
+            <div class="btns">
+                <button onclick="handleAddMedication()" class="btn-submit" type="submit">
+                    Add
+                </button>
+                <button class="btn-close-popup" onclick="togglePopup()">
+                    Close
+                </button>
+            </div>
+        </div>
+    </div>
+
 
     <!-- Script -->
 
     <script src="/javascripts/medications.js"></script>
 
 </body>
+
 </html>

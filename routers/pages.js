@@ -12,7 +12,8 @@ router.get("/home", sessionChecker, (req, res) => {
 });
 
 router.get("/medications", sessionChecker, async (req, res) => {
-    res.render("medicationsPage");
+    let name = req.session.profile.first_name;
+    res.render("medicationsPage", { name });
 });  
 
 module.exports = router;
