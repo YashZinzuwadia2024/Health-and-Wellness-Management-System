@@ -121,9 +121,11 @@ module.exports = {
                         user_id: req.session.profile.id,
                         medication_details_id: new_medication_id
                     });
-                    const minutes = new Date(new_medication_details.start_date).getMinutes();
-                    const hours = new Date(new_medication_details.start_date).getHours();
-                    await scheduleDailyMails(`${minutes} ${hours} * * *`, new_medication_details.end_date);
+                    const minutes = new_medication_details.time.split(":")[1];
+                    const hours = new_medication_details.time.split(":")[0];
+                    console.log("mins: ",minutes);
+                    console.log("hours: ", hours);
+                    await scheduleDailyMails(`${minutes} ${hours} * * *`, medicine_name, description, new_medication_details.end_date);
                     return res.status(200).json({ new_medication: new_medication, success: true });
                 } else {
                     const { id } = await db.medication_types.findOne({
@@ -149,7 +151,7 @@ module.exports = {
                     const minutes = new Date(new_medication_details.start_date).getMinutes();
                     const hours = new Date(new_medication_details.start_date).getHours();
                     const specific_day = getDay(day.toLowerCase());
-                    await scheduleWeeklyMails(`${minutes} ${hours} * * ${specific_day}`, new_medication_details.end_date);
+                    await scheduleWeeklyMails(`${minutes} ${hours} * * ${specific_day}`, medicine_name, description, new_medication_details.end_date);
                     return res.status(200).json({ new_medication: newMedication, success: true });
                 }
             }

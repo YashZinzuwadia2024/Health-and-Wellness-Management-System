@@ -1,10 +1,12 @@
+const isLastDay = require("../utils/isLastDay");
 const emailQueue = require("./producer");
 const cron = require("node-cron");
 
 module.exports = {
-    scheduleDailyMails: async (exp, end_date) => {
-        const task = cron.schedule(exp, async () => {
-            if (!isLastDay()) {
+    scheduleDailyMails: async (exp, medicine_name, description, end_date) => {
+        cron.schedule(exp, async () => {
+            const flag = isLastDay(end_date);
+            if (!flag) {
                 await emailQueue.add("email", {
                     medicine_name: medicine_name,
                     description: description
@@ -13,21 +15,14 @@ module.exports = {
                     removeOnFail: true
                 });
             } else {
-                task.stop();
-            }
-            const isLastDay = () => {
-                const current_day = moment().format("YYYY-MM-DD");
-                if (current_day > end_date) {
-                    return true;
-                } else {
-                    return false;
-                }
+                return;
             }
         });
     },
-    scheduleWeeklyMails: async (exp, end_date) => {
-        const task = cron.schedule(exp, async () => {
-            if (!isLastDay()) {
+    scheduleWeeklyMails: async (exp, medicine_name, description, end_date) => {
+        cron.schedule(exp, async () => {
+            const flag = isLastDay(end_date);
+            if (!flag) {
                 await emailQueue.add("email", {
                     medicine_name: medicine_name,
                     description: description
@@ -36,15 +31,7 @@ module.exports = {
                     removeOnFail: true
                 });
             } else {
-                task.stop();
-            }
-            const isLastDay = () => {
-                const current_day = moment().format("YYYY-MM-DD");
-                if (current_day > end_date) {
-                    return true;
-                } else {
-                    return false;
-                }
+                return;
             }
         });
     }
