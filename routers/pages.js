@@ -11,9 +11,14 @@ router.get("/home", sessionChecker, (req, res) => {
     res.render("home", { name });
 });
 
-router.get("/medications", sessionChecker, async (req, res) => {
+router.get("/medications", sessionChecker, (req, res) => {
     let name = req.session.profile.first_name;
     res.render("medicationsPage", { name });
 });  
+
+router.get("/reports", sessionChecker, (req ,res) => {
+    let name = req.session.profile.first_name;
+    res.render("reports", { name });
+})
 
 module.exports = router;

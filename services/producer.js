@@ -5,4 +5,8 @@ const emailQueue = new Queue("emails", {
     connection: redisConfig
 });
 
-module.exports = emailQueue;
+const reportQueue = new Queue("reports", {
+    connection: redisConfig
+});
+
+module.exports = { emailQueue, reportQueue };

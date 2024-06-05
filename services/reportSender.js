@@ -9,13 +9,12 @@ const transporter = nodemailer.createTransport({
     }
 });
 
-const sendMail = (user, medication_details) => {
+const sendMail = (user, data) => {
     try {
-        const { medicine_name, description } = medication_details;
         const mailOptions = {
             from: process.env.TRANSPORTER,
             to: user,
-            subject: 'Regular Medication Notification',
+            subject: 'Weekly Medication Report',
             html: `
                 <form action="http://localhost:3500/markAsDone" method="post">
                     <h3 id="medicine_name">It's time to take ${medicine_name}</h3>

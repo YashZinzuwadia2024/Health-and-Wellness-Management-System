@@ -1,5 +1,5 @@
 const isLastDay = require("../utils/isLastDay");
-const emailQueue = require("./producer");
+const {emailQueue} = require("./producer");
 const cron = require("node-cron");
 
 module.exports = {

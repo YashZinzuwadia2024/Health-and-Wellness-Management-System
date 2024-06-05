@@ -1,6 +1,5 @@
 const db = require("../models/index");
-const emailQueue = require("../services/producer");
-const cron = require("node-cron");
+const {emailQueue} = require("../services/producer");
 const moment = require("moment");
 const { scheduleDailyMails, scheduleWeeklyMails } = require("../services/scheduleMails");
 const getDay = require("../utils/getDay");

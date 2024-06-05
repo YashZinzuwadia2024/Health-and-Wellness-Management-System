@@ -10,7 +10,7 @@
     <link rel="stylesheet" href="/css/bootstrap.min.css" />
     <link rel="stylesheet" href="/stylesheets/home.css">
     <link rel="stylesheet" href="/stylesheets/medications.css">
-    <title>Health & Wellness Management System | Medications</title>
+    <title>Health & Wellness Management System | Reports</title>
 </head>
 
 <body>
@@ -32,46 +32,23 @@
     </header>
     <div class="container">
         <div class="heading">
-            <h2>Medications</h2>
-            <div class="main_btns">
-                <div class="add" onclick="togglePopup()">
-                    <i class="bi bi-plus-circle"></i>
-                    <p>Add</p>
-                </div>
-            </div>
+            <h2>Reports</h2>
         </div>
-        <table class="table table-hover table-light" id="medication_table">
+        <table class="table" id="reports_table">
             <thead>
                 <tr id="headerRow">
+                    <th>ID</th>
+                    <th>Report</th>
+                    <th>Action</th>
                 </tr>
             </thead>
             <tbody id="data_rows"></tbody>
         </table>
     </div>
 
-    <div id="popupOverlay" class="overlay-container">
-        <div class="popup-box">
-            <div class="modal_heading">
-                <i class="bi bi-capsule"></i>
-                <h5>Add Medication</h2>
-            </div>
-            <form class="form-container" id="main_form">
-            </form>
-            <div class="btns">
-                <button onclick="handleAddMedication()" class="btn-submit" type="submit">
-                    Add
-                </button>
-                <button class="btn-close-popup" onclick="togglePopup()">
-                    Close
-                </button>
-            </div>
-        </div>
-    </div>
-
-
     <!-- Script -->
 
-    <script src="/javascripts/medications.js"></script>
+    <script src="/javascripts/reports.js"></script>
 
 </body>
 
