@@ -14,16 +14,7 @@ const sendMail = (user, data) => {
         const mailOptions = {
             from: process.env.TRANSPORTER,
             to: user,
-            subject: 'Weekly Medication Report',
-            html: `
-                <form action="http://localhost:3500/markAsDone" method="post">
-                    <h3 id="medicine_name">It's time to take ${medicine_name}</h3>
-                    <p id="description">${description}</p>
-                    <label for="markAsDone">Confirm Once!!</label>
-                    <input type="checkbox" name="markAsDone" id="markAsDone">
-                    <input type="submit" value="Submit">
-                </form>
-            `
+            subject: 'Weekly Medication Report'
         };
         transporter.sendMail(mailOptions, (error, info) => {
             if (error) {

@@ -12,13 +12,13 @@ const transporter = nodemailer.createTransport({
 
 const sendMail = (user, medication_details) => {
     try {
-        const { medicine_name, description } = medication_details;
+        const { medicine_name, description, user_id, medication_id } = medication_details;
         const mailOptions = {
             from: process.env.TRANSPORTER,
             to: user,
             subject: 'Regular Medication Notification',
             html: `
-                <form action="http://localhost:3500/markAsDone" method="post">
+                <form action="http://localhost:3500/markAsDone?user_id=${user_id}&medication_id=${medication_id}" method="post">
                     <h3 id="medicine_name">It's time to take ${medicine_name}</h3>
                     <p id="description">${description}</p>
                     <label for="markAsDone">Confirm Once!!</label>
@@ -32,7 +32,9 @@ const sendMail = (user, medication_details) => {
                 console.log(error);
             } else {
                 await db.medication_status.create({
-                    status: 0
+                    status: 0,
+                    user_id: user_id,
+                    medication_id: medication_id
                 })
                 console.log('Email sent: ' + info.response);
             }

@@ -92,6 +92,8 @@ module.exports = {
                 });
                 const specific_time = moment(`${new_medication_details.start_date} ${new_medication_details.time}`)
                 await emailQueue.add("email", {
+                    user_id: req.session.profile.id,
+                    medication_id: new_medication.id,
                     medicine_name: medicine_name,
                     description: description
                 }, {
