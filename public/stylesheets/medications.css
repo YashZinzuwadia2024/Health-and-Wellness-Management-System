@@ -9,6 +9,29 @@
     gap: 35px;
 }
 
+.main_btns {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.main_btns .buttons {
+    background-color: rgb(100, 100, 223);
+    border-radius: 12px;
+    color: #fff;
+    padding: 12px 14px;
+    cursor: pointer;
+    transition: 200ms all;
+}
+
+.main_btns .buttons:hover {
+    opacity: 0.6;
+}
+
+.main_btns .buttons:active {
+    transform: scale(0.8);
+}
+
 .heading {
     display: flex;
     justify-content: space-between;

@@ -40,6 +40,8 @@ app.set("view engine", "ejs");
 
 const routes = require("./routers/index");
 app.use("/", routes);
+require("./config/cloudinary");
+const { emailWorker, reportWorker } = require("./services/worker");
 
 app.listen(PORT, () => {
     console.log(`Server started at http://localhost:${PORT}`);

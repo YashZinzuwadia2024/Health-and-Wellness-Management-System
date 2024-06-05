@@ -6,6 +6,4 @@ const redisConfig = {
     host: process.env.REDIS_HOST
 }
 
-const redisConnection = new Redis(redisConfig);
-
-module.exports = redisConnection;
+module.exports = redisConfig;

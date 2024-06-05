@@ -1,8 +1,12 @@
 const { Queue } = require("bullmq");
-const redisConnection = require("../config/redisConnection");
+const redisConfig = require("../config/redisConnection");
 
 const emailQueue = new Queue("emails", {
-    connection: redisConnection
+    connection: redisConfig
 });
 
-module.exports = emailQueue;
+const reportQueue = new Queue("reports", {
+    connection: redisConfig
+});
+
+module.exports = { emailQueue, reportQueue };
