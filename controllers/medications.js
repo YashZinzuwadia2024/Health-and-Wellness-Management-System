@@ -2,6 +2,8 @@ const db = require("../models/index");
 const emailQueue = require("../services/producer");
 const cron = require("node-cron");
 const moment = require("moment");
+const { scheduleDailyMails, scheduleWeeklyMails } = require("../services/scheduleMails");
+const getDay = require("../utils/getDay");
 
 module.exports = {
     getCountOfMeds: async (req, res) => {
@@ -119,6 +121,9 @@ module.exports = {
                         user_id: req.session.profile.id,
                         medication_details_id: new_medication_id
                     });
+                    const minutes = new Date(new_medication_details.start_date).getMinutes();
+                    const hours = new Date(new_medication_details.start_date).getHours();
+                    await scheduleDailyMails(`${minutes} ${hours} * * *`, new_medication_details.end_date);
                     return res.status(200).json({ new_medication: new_medication, success: true });
                 } else {
                     const { id } = await db.medication_types.findOne({
@@ -127,7 +132,6 @@ module.exports = {
                             name: 'weekly'
                         }
                     });
-                    console.log(id);
                     const new_medication_details = await db.medication_details.create({
                         start_date: start_date,
                         end_date: end_date,
@@ -142,6 +146,10 @@ module.exports = {
                         user_id: req.session.profile.id,
                         medication_details_id: new_medication_id
                     });
+                    const minutes = new Date(new_medication_details.start_date).getMinutes();
+                    const hours = new Date(new_medication_details.start_date).getHours();
+                    const specific_day = getDay(day.toLowerCase());
+                    await scheduleWeeklyMails(`${minutes} ${hours} * * ${specific_day}`, new_medication_details.end_date);
                     return res.status(200).json({ new_medication: newMedication, success: true });
                 }
             }
