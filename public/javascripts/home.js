@@ -18,7 +18,21 @@ const getCounts = async () => {
 })();
 
 const logout = async () => {
-    const response = await axios.get("/logout");
+    const response = await axios.post("/logout");
+    if (response.statusText !== "OK") return;
+    location.href = "/";
+    return;
+}
+
+const logout_others = async () => {
+    const response = await axios.post("/logout-others");
+    if (response.statusText !== "OK") return;
+    location.href = "/home";
+    return;
+}
+
+const logout_all = async () => {
+    const response = await axios.post("/logout-all");
     if (response.statusText !== "OK") return;
     location.href = "/";
     return;

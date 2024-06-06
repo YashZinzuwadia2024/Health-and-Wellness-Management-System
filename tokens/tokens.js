@@ -8,4 +8,4 @@ const isBlacklisted = (token) => {
     return tokenBlacklist.has(token);
 };
 
-module.exports = { addToBlacklist, isBlacklisted };
+module.exports = { tokenBlacklist, addToBlacklist, isBlacklisted };

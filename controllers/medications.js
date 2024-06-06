@@ -9,7 +9,7 @@ module.exports = {
         try {
             const data = await db.medications.findAndCountAll({
                 where: {
-                    user_id: req.session.profile.id
+                    user_id: req.user.id
                 }
             });
             return res.status(200).json({ count: data.count });
@@ -22,7 +22,7 @@ module.exports = {
         try {
             const data = await db.reports.findAndCountAll({
                 where: {
-                    user_id: req.session.profile.id
+                    user_id: req.user.id
                 }
             });
             return res.status(200).json({ count: data.count });
@@ -33,7 +33,7 @@ module.exports = {
     },
     getMedications: async (req, res) => {
         try {
-            const user_id = req.session.profile.id;
+            const user_id = req.user.id;
             let { medications } = await db.users.findOne({
                 attributes: {
                     exclude: ['id', 'first_name', 'last_name', 'email', 'password', 'createdAt', 'updatedAt', 'deletedAt']
@@ -87,12 +87,12 @@ module.exports = {
                 const new_medication = await db.medications.create({
                     medicine_name: medicine_name,
                     description: description,
-                    user_id: req.session.profile.id,
+                    user_id: req.user.id,
                     medication_details_id: id
                 });
                 const specific_time = moment(`${new_medication_details.start_date} ${new_medication_details.time}`)
                 await emailQueue.add("email", {
-                    user_id: req.session.profile.id,
+                    user_id: req.user.id,
                     medication_id: new_medication.id,
                     medicine_name: medicine_name,
                     description: description
@@ -119,7 +119,7 @@ module.exports = {
                     const new_medication = await db.medications.create({
                         medicine_name: medicine_name,
                         description: description,
-                        user_id: req.session.profile.id,
+                        user_id: req.user.id,
                         medication_details_id: new_medication_id
                     });
                     const minutes = new_medication_details.time.split(":")[1];
@@ -146,7 +146,7 @@ module.exports = {
                     const newMedication = await db.medications.create({
                         medicine_name: medicine_name,
                         description: description,
-                        user_id: req.session.profile.id,
+                        user_id: req.user.id,
                         medication_details_id: new_medication_id
                     });
                     const minutes = new Date(new_medication_details.start_date).getMinutes();
