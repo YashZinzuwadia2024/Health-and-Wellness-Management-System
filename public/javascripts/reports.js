@@ -3,6 +3,27 @@ const headerRow = document.getElementById("headerRow");
 const data_rows = document.getElementById("data_rows");
 let all_reports;
 
+const logout = async () => {
+    const response = await axios.post("/logout");
+    if (response.statusText !== "OK") return;
+    location.href = "/";
+    return;
+}
+
+const logout_others = async () => {
+    const response = await axios.post("/logout-others");
+    if (response.statusText !== "OK") return;
+    location.href = "/home";
+    return;
+}
+
+const logout_all = async () => {
+    const response = await axios.post("/logout-all");
+    if (response.statusText !== "OK") return;
+    location.href = "/";
+    return;
+}
+
 const getReports = async () => {
     const { data } = await axios.get("/myReports");
     return data;

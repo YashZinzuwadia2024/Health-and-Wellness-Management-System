@@ -1,5 +1,3 @@
-const moment = require("moment");
-
 'use strict';
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
@@ -14,7 +12,7 @@ module.exports = {
       notification_date: {
         allowNull: false,
         type: Sequelize.DATE,
-        defaultValue: moment().format("YYYY-MM-DD")
+        defaultValue: Sequelize.literal(`CURRENT_TIMESTAMP`)
       },
       status: {
         allowNull: false,

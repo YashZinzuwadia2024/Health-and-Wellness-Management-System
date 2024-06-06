@@ -4,7 +4,7 @@ const redisConnection = require("../config/redisConnection");
 const generateCsv = require("../utils/generateCsv");
 
 const emailWorker = new Worker("emails", async job => {
-    sendMail("yash.zinzuwadia.2024@gmail.com", job.data);
+    sendMail(job.data.user, job.data);
 }, {
     connection: redisConnection
 });

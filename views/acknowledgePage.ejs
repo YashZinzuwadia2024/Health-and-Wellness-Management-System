@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/icons/bootstrap-icons.css">
+    <link rel="stylesheet" href="/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="/stylesheets/acknowledgePage.css">
+    <title>WeCare | Medication Completed</title>
+</head>
+
+<body>
+    <div class="container">
+        <div class="heading">
+            <i class="bi bi-check-circle-fill"></i>
+            <h2>Good Job!</h2>
+        </div>
+        <p>You have completed your today's dosage of <%= medicine %>
+        </p>
+        <div class="end">
+            <h2>Keep caring of yourself</h2>
+            <i class="bi bi-emoji-smile-fill"></i>
+        </div>
+        <button class="buttons" onclick="closeWindow()">Close</button>
+    </div>
+</body>
+<script>
+    function closeWindow() {
+        window.close();
+    }
+</script>
+
+</html>

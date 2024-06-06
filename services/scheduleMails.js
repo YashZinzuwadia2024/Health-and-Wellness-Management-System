@@ -19,11 +19,13 @@ module.exports = {
             }
         });
     },
-    scheduleWeeklyMails: async (exp, medicine_name, description, end_date) => {
+    scheduleWeeklyMails: async (exp, email, medicine_name, description, end_date) => {
         cron.schedule(exp, async () => {
             const flag = isLastDay(end_date);
             if (!flag) {
+                console.log("Ready");
                 await emailQueue.add("email", {
+                    user: email,
                     medicine_name: medicine_name,
                     description: description
                 }, {

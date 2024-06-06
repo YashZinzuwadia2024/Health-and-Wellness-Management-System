@@ -1,0 +1,107 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: "Poppins", sans-serif;
+}
+
+body {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    background-color: rgb(100, 100, 223);
+}
+
+.container {
+    margin: 80px auto;
+    width: fit-content;
+    padding: 25px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+    background-color: #fff;
+    border-radius: 12px;
+    box-shadow: 2px 7px 4px 4px #ebebeb;
+}
+
+.validation_spans {
+    display: none;
+    color: red;
+}
+
+.container form {
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
+    align-items: center;
+}
+
+.container .logo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.container .logo h2 {
+    color: rgb(100, 100, 223);
+}
+
+.container form img {
+    height: 100px;
+}
+
+.container form .fields {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+}
+
+.container form .fields .field {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.field label {
+    text-transform: uppercase;
+    font-weight: 600;
+}
+
+.field input {
+    padding: 8px 95px 8px 10px;
+    outline: none;
+    border: 1px solid #ccc;
+    transition: 0.4s border;
+}
+
+.field input:focus {
+    border: 1px solid #6d6d6d;
+}
+
+.container form p a {
+    color: rgb(100, 100, 223);
+    font-weight: 600;
+}
+
+.buttons {
+    background-color: rgb(100, 100, 223);
+    border-radius: 12px;
+    border: none;
+    color: #fff;
+    font-weight: 600;
+    padding: 12px 14px;
+    cursor: pointer;
+    transition: 200ms all;
+    width: fit-content;
+}
+
+.buttons:hover {
+    opacity: 0.6;
+}
+
+.buttons:active {
+    transform: scale(0.95);
+}

@@ -2,6 +2,7 @@
 const {
   Model
 } = require('sequelize');
+const { Sequelize } = require('.');
 module.exports = (sequelize, DataTypes) => {
   class medication_status extends Model {
     static associate(models) {
@@ -23,7 +24,7 @@ module.exports = (sequelize, DataTypes) => {
     notification_date: {
       allowNull: false,
       type: DataTypes.DATE,
-      defaultValue: moment().format("YYYY-MM-DD")
+      defaultValue: sequelize.literal(`CURRENT_TIMESTAMP`)
     },
     status: {
       allowNull: false,

@@ -3,23 +3,36 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="/axios/axios.min.js"></script>
+    <link rel="stylesheet" href="/stylesheets/login.css">
     <title>Health & Wellness Management System | Login</title>
 </head>
 <body>
     <div class="container">
-        <form action="/login" method="post">
+        <form action="/login" method="post" id="user-login">
+            <div class="logo">
+                <img src="/assets/logo.svg" alt="">
+                <h2>WeCare</h2>
+            </div>
             <div class="fields">
                 <div class="field">
                     <label for="email">Email</label>
-                    <input type="text" name="email" id="email">
+                    <input class="input" type="text" placeholder="Email" name="email" id="email" autocomplete="off" required>
+                    <span class="validation_spans" id="email_span">Spaces are not allowed</span>
                 </div>
                 <div class="field">
                     <label for="password">Password</label>
-                    <input type="password" name="password" id="password">
+                    <input class="input" type="password" placeholder="Password" name="password" id="password" required>
                 </div>
             </div>
+            <p>Don't have an account? <a onclick="" href="/user-registration">Register</a></p>
             <input type="submit" value="Login" class="buttons">
         </form>
     </div>
+
+    <!-- Script -->
+
+    <script src="/javascripts/login.js"></script>
+
 </body>
 </html>

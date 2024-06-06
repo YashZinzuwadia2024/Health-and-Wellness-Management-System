@@ -1,10 +1,16 @@
 const router = require("express").Router();
-const { getCountOfMeds, getCountOfReports, getMedications, addMedication } = require("../controllers/medications");
-const sessionChecker = require("../middlewares/validateUser");
+const { getCountOfMeds,
+    getCountOfReports,
+    getMedications,
+    addMedication,
+    markAsDone
+} = require("../controllers/medications");
+const authenticateToken = require("../middlewares/authenticateToken");
 
-router.get("/getCountOfMed", sessionChecker, getCountOfMeds);
-router.get("/getCountOfReports", sessionChecker, getCountOfReports);
-router.get("/getMedications", sessionChecker, getMedications);
-router.post("/medications/addMedication", sessionChecker, addMedication);
+router.get("/getCountOfMed", authenticateToken, getCountOfMeds);
+router.get("/getCountOfReports", authenticateToken, getCountOfReports);
+router.get("/getMedications", authenticateToken, getMedications);
+router.post("/medications/addMedication", authenticateToken, addMedication);
+router.post("/markAsDone", markAsDone);
 
 module.exports = router;

@@ -9,7 +9,7 @@ module.exports = {
         try {
             const data = await db.medications.findAndCountAll({
                 where: {
-                    user_id: req.session.profile.id
+                    user_id: req.user.id
                 }
             });
             return res.status(200).json({ count: data.count });
@@ -22,7 +22,7 @@ module.exports = {
         try {
             const data = await db.reports.findAndCountAll({
                 where: {
-                    user_id: req.session.profile.id
+                    user_id: req.user.id
                 }
             });
             return res.status(200).json({ count: data.count });
@@ -33,7 +33,7 @@ module.exports = {
     },
     getMedications: async (req, res) => {
         try {
-            const user_id = req.session.profile.id;
+            const user_id = req.user.id;
             let { medications } = await db.users.findOne({
                 attributes: {
                     exclude: ['id', 'first_name', 'last_name', 'email', 'password', 'createdAt', 'updatedAt', 'deletedAt']
@@ -87,12 +87,13 @@ module.exports = {
                 const new_medication = await db.medications.create({
                     medicine_name: medicine_name,
                     description: description,
-                    user_id: req.session.profile.id,
+                    user_id: req.user.id,
                     medication_details_id: id
                 });
                 const specific_time = moment(`${new_medication_details.start_date} ${new_medication_details.time}`)
                 await emailQueue.add("email", {
-                    user_id: req.session.profile.id,
+                    user_id: req.user.id,
+                    user: req.user.email,
                     medication_id: new_medication.id,
                     medicine_name: medicine_name,
                     description: description
@@ -103,11 +104,13 @@ module.exports = {
                 });
                 return res.status(200).json({ new_medication: new_medication, success: true });
             } else if (type === 'Recurring') {
+                console.log("day: ", day);
                 if (day == '') {
                     const { id } = await db.medication_types.findOne({
                         where: {
                             name: 'daily'
-                        }
+                        },
+                        raw: true
                     });
                     const new_medication_details = await db.medication_details.create({
                         start_date: start_date,
@@ -119,21 +122,20 @@ module.exports = {
                     const new_medication = await db.medications.create({
                         medicine_name: medicine_name,
                         description: description,
-                        user_id: req.session.profile.id,
+                        user_id: req.user.id,
                         medication_details_id: new_medication_id
                     });
                     const minutes = new_medication_details.time.split(":")[1];
                     const hours = new_medication_details.time.split(":")[0];
-                    console.log("mins: ",minutes);
-                    console.log("hours: ", hours);
-                    await scheduleDailyMails(`${minutes} ${hours} * * *`, medicine_name, description, new_medication_details.end_date);
+                    await scheduleDailyMails(`${minutes} ${hours} * * *`, req.user.email, medicine_name, description, new_medication_details.end_date);
                     return res.status(200).json({ new_medication: new_medication, success: true });
                 } else {
                     const { id } = await db.medication_types.findOne({
                         attributes: ['id'],
                         where: {
                             name: 'weekly'
-                        }
+                        },
+                        raw: true
                     });
                     const new_medication_details = await db.medication_details.create({
                         start_date: start_date,
@@ -146,16 +148,42 @@ module.exports = {
                     const newMedication = await db.medications.create({
                         medicine_name: medicine_name,
                         description: description,
-                        user_id: req.session.profile.id,
+                        user_id: req.user.id,
                         medication_details_id: new_medication_id
                     });
-                    const minutes = new Date(new_medication_details.start_date).getMinutes();
-                    const hours = new Date(new_medication_details.start_date).getHours();
-                    const specific_day = getDay(day.toLowerCase());
-                    await scheduleWeeklyMails(`${minutes} ${hours} * * ${specific_day}`, medicine_name, description, new_medication_details.end_date);
+                    const minutes = new_medication_details.time.split(":")[1];
+                    const hours = new_medication_details.time.split(":")[0];
+                    const specific_day = getDay(day);
+                    await scheduleWeeklyMails(`${minutes} ${hours} * * ${specific_day}`, req.user.email, medicine_name, description, new_medication_details.end_date);
                     return res.status(200).json({ new_medication: newMedication, success: true });
                 }
             }
+        } catch (error) {
+            console.log(error);
+            return res.status(500).json({ message: "Somthing went wrong!" });
+        }
+    },
+    markAsDone: async (req, res) => {
+        try {
+            const { user_id, medication_id, reminder_id } = req.query;
+            const reminder_record = await db.medication_status.findOne({
+                where: {
+                    id: reminder_id
+                }
+            });
+            reminder_record.status = 1;
+            await reminder_record.save();
+            console.log("id: ", medication_id);
+            const medication = await db.medications.findOne({
+                where: {
+                    id: medication_id
+                },
+                raw: true
+            });
+            console.log(medication);
+            return res.render("acknowledgePage", {
+                medicine: medication.medicine_name
+            });
         } catch (error) {
             console.log(error);
             return res.status(500).json({ message: "Somthing went wrong!" });

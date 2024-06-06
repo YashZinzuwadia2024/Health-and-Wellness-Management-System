@@ -2,24 +2,14 @@ const express = require("express");
 const app = express();
 require("dotenv").config();
 const PORT = process.env.PORT || 3500;
-const session = require("express-session");
 const path = require("path");
+const cookieParser = require("cookie-parser");
+
+// App Permissions
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.set("trust proxy", 1);
-app.use(
-  session({
-    name: "mySession",
-    secret: process.env.SECRET_KEY,
-    resave: false,
-    saveUninitialized: false,
-    cookie: {
-      secure: false,
-      maxAge: 60 * 60 * 1000,
-    }
-  })
-);
+app.use(cookieParser());
 app.use(
   "/css",
   express.static(path.join(__dirname, "node_modules/bootstrap/dist/css"))
@@ -40,6 +30,9 @@ app.set("view engine", "ejs");
 
 const routes = require("./routers/index");
 app.use("/", routes);
+
+// Cloudinary storage and workers
+
 require("./config/cloudinary");
 const { emailWorker, reportWorker } = require("./services/worker");
 

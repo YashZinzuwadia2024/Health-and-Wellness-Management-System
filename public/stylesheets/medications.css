@@ -6,6 +6,7 @@
     min-height: 500px;
     display: flex;
     flex-direction: column;
+    align-items: center;
     gap: 35px;
 }
 
@@ -35,6 +36,7 @@
 .heading {
     display: flex;
     justify-content: space-between;
+    width: 100%;
     align-items: center;
 }
 
@@ -210,4 +212,68 @@
 .overlay-container.show {
     display: flex;
     opacity: 1;
+}
+
+/* Pagination */
+
+#medication_table {
+    border-collapse: collapse;
+}
+
+.headings {
+    padding: 10px 20px;
+    text-transform: uppercase;
+    color: #6C6C6C;
+}
+
+.data {
+    padding: 10px 20px;
+}
+
+.pagination {
+    display: flex;
+    justify-content: end;
+}
+
+.pagination-box {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 15px;
+}
+
+.pagination-box button {
+    cursor: pointer;
+    padding: 10px 20px;
+    background-color: rgb(100, 100, 223);
+    border: grey;
+    border-radius: 50%;
+    outline: 2px solid #fff;
+    text-align: center;
+    font-weight: 600;
+    font-size: 20px;
+    transition: 0.4s all;
+}
+
+.pagination-box button:active {
+    transform: scale(0.7);
+}
+
+.pagination-box button:hover {
+    opacity: 0.8;
+}
+
+.pagination-box p {
+    cursor: none;
+    padding: 10px 20px;
+    background-color: rgb(100, 100, 223);
+    border: grey;
+    border-radius: 50%;
+    outline: 2px solid #fff;
+    text-align: center;
+    font-weight: 600;
+    font-size: 20px;
+    transition: 0.4s all;
+    margin-left: 20px;
+    margin-right: 20px;
 }
