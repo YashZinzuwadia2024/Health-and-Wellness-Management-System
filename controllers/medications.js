@@ -103,11 +103,13 @@ module.exports = {
                 });
                 return res.status(200).json({ new_medication: new_medication, success: true });
             } else if (type === 'Recurring') {
+                console.log("day: ", day);
                 if (day == '') {
                     const { id } = await db.medication_types.findOne({
                         where: {
                             name: 'daily'
-                        }
+                        },
+                        raw: true
                     });
                     const new_medication_details = await db.medication_details.create({
                         start_date: start_date,

@@ -1,7 +1,6 @@
-let medications;
+let finalData = [];
 const medication_table = document.getElementById("medication_table");
-const headerRow = document.getElementById("headerRow");
-const data_rows = document.getElementById("data_rows");
+const headerRow = document.getElementById("header_row");
 const main_form = document.getElementById("main_form");
 const radio_inputs = document.getElementById("radio_inputs");
 let pageNoBox = document.getElementById("pageNo");
@@ -12,7 +11,6 @@ let pageNo = Number(document.getElementById("pageNo").innerText);
 let recordsPerTab = 10,
     offset,
     totalPages;
-
 
 const logout = async () => {
     const response = await axios.post("/logout");
@@ -51,7 +49,6 @@ const getdata = async () => {
         };
         updatedMedications.push(newObj);
     });
-    let finalData = [];
     updatedMedications.map(medication => {
         if (medication.medication_type === null) {
             finalData.push(medication);
@@ -80,6 +77,7 @@ const insertHeadings = (obj) => {
         }
         else {
             let heading_cell = document.createElement("th");
+            heading_cell.classList.add("headings");
             heading_cell.classList.add("table_headings");
             if (key == 'name') {
                 heading_cell.textContent = 'DOSAGE';
@@ -101,16 +99,16 @@ const insertData = (data) => {
     console.log(data);
     if (data.length === 0) {
         medication_table.innerHTML = "";
-        let row = table.insertRow(-1);
+        let row = medication_table.insertRow(-1);
         row.setAttribute("class", "data-row");
         let dataCell = row.insertCell(-1);
         dataCell.setAttribute("class", "data");
-        dataCell.setAttribute("colspan", "5");
+        dataCell.setAttribute("colspan", "7");
         dataCell.setAttribute("align", "center");
-        dataCell.innerText = "No Posts Available";
+        dataCell.innerText = "Not added any medciations yet!";
         row.appendChild(dataCell);
         return medication_table.appendChild(row);
-    } else {
+    } else {    
         totalPages = Math.ceil(data.length / recordsPerTab);
         if (!pageNo) {
             pageNo = 1;
@@ -120,12 +118,14 @@ const insertData = (data) => {
         data = data.slice(offset, pageNo * recordsPerTab);
         data.map(medication => {
             let row = medication_table.insertRow(-1);
+            row.classList.add("data-row");
             for (const key in medication) {
                 if (key === 'isDone') {
                     continue;
                 }
                 else {
                     let cell = row.insertCell(-1);
+                    cell.classList.add("data");
                     if (medication[key] == null || medication[key] == undefined) {
                         cell.textContent = '-';
                     }
@@ -135,7 +135,7 @@ const insertData = (data) => {
                     row.appendChild(cell);
                 }
             }
-            data_rows.appendChild(row);
+            medication_table.appendChild(row);
         });
         return;
     }
@@ -259,6 +259,7 @@ const handleTypeInput = (e) => {
                     Day
                 </label>
                 <select class="form-input" name="day" id="day" disabled>
+                    <option value="">---Please Select Day---</option>
                     <option value="sunday">Sunday</option>
                     <option value="monday">Monday</option>
                     <option value="tuesday">Tuesday</option>
@@ -360,10 +361,10 @@ function leftMost() {
     } else {
         pageNo = 1;
         pageNoBox.innerText = pageNo;
-        table.innerHTML = "";
+        medication_table.innerHTML = "";
         headerRow.innerHTML = "";
-        insertHeadings(dataGlobal[0]);
-        insertData(dataGlobal);
+        insertHeadings(finalData[0]);
+        insertData(finalData);
         return;
     }
 }
@@ -372,10 +373,10 @@ function left() {
     if (pageNo == 1) return;
     pageNo--;
     pageNoBox.innerText = pageNo;
-    table.innerHTML = "";
+    medication_table.innerHTML = "";
     headerRow.innerHTML = "";
-    insertHeadings(dataGlobal[0]);
-    insertData(dataGlobal);
+    insertHeadings(finalData[0]);
+    insertData(finalData);
     return;
 }
 
@@ -383,18 +384,18 @@ function right() {
     if (pageNo == totalPages) {
         pageNo = 1;
         pageNoBox.innerText = pageNo;
-        table.innerHTML = "";
+        medication_table.innerHTML = "";
         headerRow.innerHTML = "";
-        insertHeadings(dataGlobal[0]);
-        insertData(dataGlobal);
+        insertHeadings(finalData[0]);
+        insertData(finalData);
         return;
     } else {
         pageNo++;
         pageNoBox.innerText = pageNo;
-        table.innerHTML = "";
+        medication_table.innerHTML = "";
         headerRow.innerHTML = "";
-        insertHeadings(dataGlobal[0]);
-        insertData(dataGlobal);
+        insertHeadings(finalData[0]);
+        insertData(finalData);
         return;
     }
 }
@@ -405,10 +406,10 @@ function rightMost() {
     } else {
         pageNo = totalPages;
         pageNoBox.innerText = pageNo;
-        table.innerHTML = "";
+        medication_table.innerHTML = "";
         headerRow.innerHTML = "";
-        insertHeadings(dataGlobal[0]);
-        insertData(dataGlobal);
+        insertHeadings(finalData[0]);
+        insertData(finalData);
         return;
     }
 }

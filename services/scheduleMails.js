@@ -20,9 +20,7 @@ module.exports = {
         });
     },
     scheduleWeeklyMails: async (exp, medicine_name, description, end_date) => {
-        console.log(exp);
         cron.schedule(exp, async () => {
-            console.log("hellowwwww");
             const flag = isLastDay(end_date);
             if (!flag) {
                 console.log("Ready");

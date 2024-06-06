@@ -216,6 +216,20 @@
 
 /* Pagination */
 
+#medication_table {
+    border-collapse: collapse;
+}
+
+.headings {
+    padding: 10px 20px;
+    text-transform: uppercase;
+    color: #6C6C6C;
+}
+
+.data {
+    padding: 10px 20px;
+}
+
 .pagination {
     display: flex;
     justify-content: end;

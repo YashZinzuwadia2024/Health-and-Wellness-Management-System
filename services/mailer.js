@@ -18,6 +18,7 @@ const sendMail = async (user, medication_details) => {
             user_id: user_id,
             medication_id: medication_id
         })
+        console.log(reminder_record);
         await reminder_record.save();
         const mailOptions = {
             from: process.env.TRANSPORTER,
