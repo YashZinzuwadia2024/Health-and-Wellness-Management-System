@@ -160,5 +160,28 @@ module.exports = {
             console.log(error);
             return res.status(500).json({ message: "Somthing went wrong!" });
         }
+    },
+    markAsDone: async (req, res) => {
+        try {
+            const { user_id, medication_id, reminder_id } = req.query;
+            const reminder_record = await db.medication_status.findOne({
+                where: {
+                    id: reminder_id
+                }
+            });
+            reminder_record.status = 1;
+            await reminder_record.save();
+            const medication = await db.medications.findOne({
+                where: {
+                    id: medication_id
+                }
+            });
+            return res.render("acknowledgePage", {
+                medicine: medication.medicine_name
+            });
+        } catch (error) {
+            console.log(error);
+            return res.status(500).json({ message: "Somthing went wrong!" });
+        }
     }
 }

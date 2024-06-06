@@ -6,7 +6,7 @@ const main_form = document.getElementById("main_form");
 const radio_inputs = document.getElementById("radio_inputs");
 
 const logout = async () => {
-    const response = await axios.get("/logout");
+    const response = await axios.post("/logout");
     if (response.statusText !== "OK") return;
     location.href = "/";
     return;
