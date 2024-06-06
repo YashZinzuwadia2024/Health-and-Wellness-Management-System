@@ -24,8 +24,8 @@
                     <i class="bi bi-box-arrow-right"></i>
                     <div class="dropdown-content">
                         <p onclick="logout()">Logout</p>
-                        <p>Logout from other devices</p>
-                        <p>Logout from all devices</p>
+                        <p onclick="logout_others()">Logout from other devices</p>
+                        <p onclick="logout_all()">Logout from all devices</p>
                     </div>
                 </div>
         </div>
@@ -47,6 +47,17 @@
             </thead>
             <tbody id="data_rows"></tbody>
         </table>
+
+        <div class="pagination">
+            <div class="pagination-box">
+                <button id="leftMost" onclick="leftMost()"><<</button>
+                <button id="left" onclick="left()"><</button>
+                <p id="pageNo">1</p>
+                <button id="right" onclick="right()">></button>
+                <button id="rightMost" onclick="rightMost()">>></button>
+            </div>
+        </div>
+        
     </div>
 
     <div id="popupOverlay" class="overlay-container">

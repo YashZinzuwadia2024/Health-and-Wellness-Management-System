@@ -54,9 +54,9 @@ body {
 }
 
 .container form .fields {
-    display: flex;
-    flex-direction: column;
-    gap: 25px;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
 }
 
 .container form .fields .field {

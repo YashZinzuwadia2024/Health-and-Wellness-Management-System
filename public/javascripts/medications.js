@@ -4,9 +4,32 @@ const headerRow = document.getElementById("headerRow");
 const data_rows = document.getElementById("data_rows");
 const main_form = document.getElementById("main_form");
 const radio_inputs = document.getElementById("radio_inputs");
+let pageNoBox = document.getElementById("pageNo");
+let pageNo = Number(document.getElementById("pageNo").innerText);
+
+// For Pagination
+
+let recordsPerTab = 10,
+    offset,
+    totalPages;
+
 
 const logout = async () => {
     const response = await axios.post("/logout");
+    if (response.statusText !== "OK") return;
+    location.href = "/";
+    return;
+}
+
+const logout_others = async () => {
+    const response = await axios.post("/logout-others");
+    if (response.statusText !== "OK") return;
+    location.href = "/home";
+    return;
+}
+
+const logout_all = async () => {
+    const response = await axios.post("/logout-all");
     if (response.statusText !== "OK") return;
     location.href = "/";
     return;
@@ -67,30 +90,55 @@ const insertHeadings = (obj) => {
             headerRow.appendChild(heading_cell);
         }
     }
+    if (medication_table.innerHTML == "") {
+        medication_table.appendChild(headerRow);
+        return;
+    }
     return;
 }
 
 const insertData = (data) => {
-    data.map(medication => {
-        let row = medication_table.insertRow(-1);
-        for (const key in medication) {
-            if (key === 'isDone') {
-                continue;
-            }
-            else {
-                let cell = row.insertCell(-1);
-                if (medication[key] == null || medication[key] == undefined) {
-                    cell.textContent = '-';
+    console.log(data);
+    if (data.length === 0) {
+        medication_table.innerHTML = "";
+        let row = table.insertRow(-1);
+        row.setAttribute("class", "data-row");
+        let dataCell = row.insertCell(-1);
+        dataCell.setAttribute("class", "data");
+        dataCell.setAttribute("colspan", "5");
+        dataCell.setAttribute("align", "center");
+        dataCell.innerText = "No Posts Available";
+        row.appendChild(dataCell);
+        return medication_table.appendChild(row);
+    } else {
+        totalPages = Math.ceil(data.length / recordsPerTab);
+        if (!pageNo) {
+            pageNo = 1;
+            offset = 0;
+        }
+        offset = (pageNo - 1) * recordsPerTab;
+        data = data.slice(offset, pageNo * recordsPerTab);
+        data.map(medication => {
+            let row = medication_table.insertRow(-1);
+            for (const key in medication) {
+                if (key === 'isDone') {
+                    continue;
                 }
                 else {
-                    cell.textContent = medication[key];
+                    let cell = row.insertCell(-1);
+                    if (medication[key] == null || medication[key] == undefined) {
+                        cell.textContent = '-';
+                    }
+                    else {
+                        cell.textContent = medication[key];
+                    }
+                    row.appendChild(cell);
                 }
-                row.appendChild(cell);
             }
-        }
-        data_rows.appendChild(row);
-    })
-    return;
+            data_rows.appendChild(row);
+        });
+        return;
+    }
 }
 
 let main_choosing_snippet = `
@@ -210,7 +258,15 @@ const handleTypeInput = (e) => {
                 <label class="form-label" for="day">
                     Day
                 </label>
-                <input class="form-input" type="text" placeholder="Day" id="day" name="day" disabled >
+                <select class="form-input" name="day" id="day" disabled>
+                    <option value="sunday">Sunday</option>
+                    <option value="monday">Monday</option>
+                    <option value="tuesday">Tuesday</option>
+                    <option value="wednesday">Wednesday</option>
+                    <option value="thursday">Thursday</option>
+                    <option value="friday">Friday</option>
+                    <option value="saturday">Saturday</option>
+                </select>
             </div>
             <div class="field">
                 <label class="form-label" for="name">
@@ -294,4 +350,65 @@ const handleAddMedication = async () => {
             }
         }
     })
+}
+
+// Pagination
+
+function leftMost() {
+    if (pageNo == 1) {
+        return;
+    } else {
+        pageNo = 1;
+        pageNoBox.innerText = pageNo;
+        table.innerHTML = "";
+        headerRow.innerHTML = "";
+        insertHeadings(dataGlobal[0]);
+        insertData(dataGlobal);
+        return;
+    }
+}
+
+function left() {
+    if (pageNo == 1) return;
+    pageNo--;
+    pageNoBox.innerText = pageNo;
+    table.innerHTML = "";
+    headerRow.innerHTML = "";
+    insertHeadings(dataGlobal[0]);
+    insertData(dataGlobal);
+    return;
+}
+
+function right() {
+    if (pageNo == totalPages) {
+        pageNo = 1;
+        pageNoBox.innerText = pageNo;
+        table.innerHTML = "";
+        headerRow.innerHTML = "";
+        insertHeadings(dataGlobal[0]);
+        insertData(dataGlobal);
+        return;
+    } else {
+        pageNo++;
+        pageNoBox.innerText = pageNo;
+        table.innerHTML = "";
+        headerRow.innerHTML = "";
+        insertHeadings(dataGlobal[0]);
+        insertData(dataGlobal);
+        return;
+    }
+}
+
+function rightMost() {
+    if (pageNo == totalPages) {
+        return;
+    } else {
+        pageNo = totalPages;
+        pageNoBox.innerText = pageNo;
+        table.innerHTML = "";
+        headerRow.innerHTML = "";
+        insertHeadings(dataGlobal[0]);
+        insertData(dataGlobal);
+        return;
+    }
 }

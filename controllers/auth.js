@@ -4,6 +4,28 @@ const db = require("../models/index");
 const { addToBlacklist, tokenBlacklist } = require("../tokens/tokens");
 
 module.exports = {
+    registerUser: async (req, res) => {
+        try {
+            const {
+                first_name,
+                last_name,
+                email,
+                password
+            } = req.body;
+            const hashedPassword = await bcrypt.hash(password, 12);
+            const new_user = await db.users.create({
+                first_name: first_name,
+                last_name: last_name,
+                email: email,
+                password: hashedPassword
+            });
+            await new_user.save();
+            return res.status(200).json({ success: true, messsage: "Registered!!" });
+        } catch (error) {
+            console.log(error);
+            return res.status(500).json({ message: "Something went wrong!" });
+        }
+    },
     userLogin: async (req, res) => {
         try {
             const { email, password } = req.body;
@@ -28,7 +50,7 @@ module.exports = {
                 sameSite: 'strict',
                 maxAge: 60 * 60 * 1000
             });
-            return res.redirect("/home");
+            return res.status(200).json({ success: true, message: "Logged in!" });
         } catch (error) {
             console.log(error);
             return res.status(500).json({ message: "Something went wrong!" });
