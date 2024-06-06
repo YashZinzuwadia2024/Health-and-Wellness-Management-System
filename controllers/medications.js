@@ -93,6 +93,7 @@ module.exports = {
                 const specific_time = moment(`${new_medication_details.start_date} ${new_medication_details.time}`)
                 await emailQueue.add("email", {
                     user_id: req.user.id,
+                    user: req.user.email,
                     medication_id: new_medication.id,
                     medicine_name: medicine_name,
                     description: description
@@ -126,7 +127,7 @@ module.exports = {
                     });
                     const minutes = new_medication_details.time.split(":")[1];
                     const hours = new_medication_details.time.split(":")[0];
-                    await scheduleDailyMails(`${minutes} ${hours} * * *`, medicine_name, description, new_medication_details.end_date);
+                    await scheduleDailyMails(`${minutes} ${hours} * * *`, req.user.email, medicine_name, description, new_medication_details.end_date);
                     return res.status(200).json({ new_medication: new_medication, success: true });
                 } else {
                     const { id } = await db.medication_types.findOne({
@@ -153,7 +154,7 @@ module.exports = {
                     const minutes = new_medication_details.time.split(":")[1];
                     const hours = new_medication_details.time.split(":")[0];
                     const specific_day = getDay(day);
-                    await scheduleWeeklyMails(`${minutes} ${hours} * * ${specific_day}`, medicine_name, description, new_medication_details.end_date);
+                    await scheduleWeeklyMails(`${minutes} ${hours} * * ${specific_day}`, req.user.email, medicine_name, description, new_medication_details.end_date);
                     return res.status(200).json({ new_medication: newMedication, success: true });
                 }
             }
