@@ -4,12 +4,11 @@ module.exports = {
     getReports: async (req, res) => {
         try {
             const { id } = req.user;
-            console.log(id);
             const reports = await db.reports.findAll({
                 where: {
                     user_id: id
                 },
-                attributes: ['report_path'],
+                attributes: ['report_path', 'report_url'],
                 raw: true
             });
             return res.status(200).json(reports);

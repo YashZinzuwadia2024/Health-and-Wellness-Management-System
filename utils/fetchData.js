@@ -25,9 +25,8 @@ module.exports = async () => {
                         }
                     ]
                 }
-            ],
+            ]
         });
-        console.log(results);
         return results; 
     } catch (error) {
         console.log(error);

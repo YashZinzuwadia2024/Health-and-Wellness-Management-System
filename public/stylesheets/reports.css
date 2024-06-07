@@ -18,16 +18,17 @@ body {
     background-color: #fff;
     border-radius: 12px;
     padding: 20px;
-    margin-top: 25px;
+    margin: 25px auto;
+    min-width: 900px;
     min-height: 500px;
     display: flex;
     flex-direction: column;
-    /* align-items: center; */
     gap: 35px;
 }
 
 #reports_table {
     border-collapse: collapse;
+    border-color: #838383;
 }
 
 #headerRow th {
@@ -37,6 +38,7 @@ body {
 .data {
     color: blue;
     padding: 10px 20px;
+    text-align: center;
     cursor: pointer;
     transition: 0.4s all;
 }
@@ -46,14 +48,13 @@ body {
 }
 
 .download_btns {
-    color: rgb(100, 100, 223);
+    color: #fff;
     font-weight: 600;
-    font-size: 1.5rem;
+    font-size: 2rem;
     cursor: pointer;
-    padding: 8px;
-    transition: 0.4s border;
+    transition: 0.4s transform;
 }
 
-.download_btns:hover {
-    border: 1px solid #ccc;
+.download_btns:active {
+    transform: scale(0.6);
 }

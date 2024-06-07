@@ -67,25 +67,34 @@ const insertData = (data) => {
         data.map(report => {
             let row = reports_table.insertRow(-1);
             for (const key in report) {
+                if (key == 'report_url') continue;
                 let cell = row.insertCell(-1);
                 cell.classList.add("data")
-                if (key == 'report_path') {
-                    report[key] = report[key].slice(report[key].lastIndexOf('/') + 1);
-                    cell.textContent = report[key].toUpperCase();
-                    cell.style.color = "blue"
-                    row.appendChild(cell);
-                } else {
-                    cell.textContent = report[key];
-                    row.appendChild(cell);
-                }
+                report[key] = report[key].slice(report[key].lastIndexOf('/') + 1);
+                cell.textContent = report[key].toUpperCase();
+                cell.style.color = "blue"
+                row.appendChild(cell);
             }
+            let cell = row.insertCell(-1);
+            cell.classList.add("data");
+            cell.classList.add("download_btns");
             let download_icon = document.createElement("i");
             download_icon.setAttribute("class", "bi bi-download");
-            download_icon.classList.add("download_btns");
+            download_icon.setAttribute("onclick", `handleDownload("${report.report_url}", "${report.report_path.slice(report.report_path.lastIndexOf('/') + 1)}")`)
             download_icon.style.color = "rgb(100, 100, 223)";
-            row.appendChild(download_icon);
+            cell.appendChild(download_icon)
+            row.appendChild(cell);
             data_rows.appendChild(row);
-        })
+        });
         return;
     }
+}
+
+const handleDownload = (url, name) => {
+    const link = document.createElement("a");
+    link.download = name;
+    link.href = url;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
 }
