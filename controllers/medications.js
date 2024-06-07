@@ -90,7 +90,7 @@ module.exports = {
                     user_id: req.user.id,
                     medication_details_id: id
                 });
-                const specific_time = moment(`${new_medication_details.start_date} ${new_medication_details.time}`)
+                const specific_time = moment(`${new_medication_details.start_date} ${new_medication_details.time}`);
                 await emailQueue.add("email", {
                     user_id: req.user.id,
                     user: req.user.email,
@@ -104,7 +104,6 @@ module.exports = {
                 });
                 return res.status(200).json({ new_medication: new_medication, success: true });
             } else if (type === 'Recurring') {
-                console.log("day: ", day);
                 if (day == '') {
                     const { id } = await db.medication_types.findOne({
                         where: {
@@ -173,14 +172,12 @@ module.exports = {
             });
             reminder_record.status = 1;
             await reminder_record.save();
-            console.log("id: ", medication_id);
             const medication = await db.medications.findOne({
                 where: {
                     id: medication_id
                 },
                 raw: true
             });
-            console.log(medication);
             return res.render("acknowledgePage", {
                 medicine: medication.medicine_name
             });

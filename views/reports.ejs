@@ -7,9 +7,9 @@
     <script src="/js/bootstrap.min.js"></script>
     <script src="/axios/axios.min.js"></script>
     <link rel="stylesheet" href="/icons/bootstrap-icons.css">
-    <link rel="stylesheet" href="/css/bootstrap.min.css" />
+    <!-- <link rel="stylesheet" href="/css/bootstrap.min.css" /> -->
     <link rel="stylesheet" href="/stylesheets/home.css">
-    <link rel="stylesheet" href="/stylesheets/medications.css">
+    <link rel="stylesheet" href="/stylesheets/reports.css">
     <title>Health & Wellness Management System | Reports</title>
 </head>
 
@@ -34,20 +34,20 @@
         <div class="heading">
             <h2>Reports</h2>
         </div>
-        <table class="table" id="reports_table">
-            <thead>
-                <tr id="headerRow">
-                    <th>ID</th>
-                    <th>Report</th>
-                    <th>Action</th>
-                </tr>
-            </thead>
-            <tbody id="data_rows"></tbody>
+        <table border="1" id="reports_table">
+            <tr id="headerRow">
+                <th>Report</th>
+                <th>Action</th>
+            </tr>
+            <tbody id="data_rows">
+
+            </tbody>
         </table>
     </div>
 
     <!-- Script -->
 
+    <script src="/socket.io/socket.io.js"></script> 
     <script src="/javascripts/reports.js"></script>
 
 </body>

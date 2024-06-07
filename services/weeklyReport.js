@@ -1,14 +1,13 @@
 const cron = require("node-cron");
-const getData = require("../utils/getData");
 const { reportQueue } = require("./producer");
+const fetchData = require("../utils/fetchData");
 
-const data = await getData();
-
-cron.schedule("0 18 * * 6", async () => {
+cron.schedule("0 6 * * 6", async () => {
+    const data = await fetchData();
     reportQueue.add("report", {
         data: data
     }, {
         removeOnComplete: true,
         removeOnFail: true
     });
-})
+});

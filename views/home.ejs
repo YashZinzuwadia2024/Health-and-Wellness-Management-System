@@ -7,6 +7,7 @@
     <script src="/axios/axios.min.js"></script>
     <link rel="stylesheet" href="/icons/bootstrap-icons.css">
     <link rel="stylesheet" href="/css/bootstrap.min.css" />
+    <link href="/sweetalert2/sweetalert2.min.css" rel="stylesheet" />
     <link rel="stylesheet" href="/stylesheets/home.css">
     <title>Health & Wellness Management System | Home</title>
 </head>
@@ -38,7 +39,7 @@
                 <p id="noOfMedications">0</p>
                 <div class="action">
                     <i class="bi bi-prescription"></i>
-                    <a href="/medications"><span>Your Medications</span></a>
+                    <a href="/medications">Your Medications</a>
                 </div>
             </div>
             <div class="card">
@@ -49,7 +50,7 @@
                 <p id="noOfReports">0</p>
                 <div class="action">
                     <i class="bi bi-eye"></i>
-                    <a href="/reports"><span>Your Reports</span></a>
+                    <a href="/reports">Your Reports</a>
                 </div>
             </div>
         </div>
@@ -57,6 +58,8 @@
 
     <!-- Script -->
 
+    <script src="/socket.io/socket.io.js"></script> 
+    <script src="/sweetalert2/sweetalert2.min.js"></script>
     <script src="/javascripts/home.js"></script>
 
 </body>

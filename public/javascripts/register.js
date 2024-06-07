@@ -31,6 +31,14 @@ form.addEventListener("submit", async (e) => {
         password: password_field.value
     });
     if (!data.success) return;
-    location.href = "/";
-    return;
+    Swal.fire({
+        title: "Congratulations!",
+        text: "You have registered successfully!",
+        icon: "success"
+    }).then(() => {
+        location.href = "/";
+        return;
+    }).catch(error => {
+        throw error;
+    });
 });

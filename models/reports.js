@@ -17,6 +17,10 @@ module.exports = (sequelize, DataTypes) => {
       primaryKey: true,
       type: DataTypes.INTEGER
     },
+    report_url: {
+      type: DataTypes.STRING,
+      allowNull: false
+    },
     report_path: {
       type: DataTypes.STRING,
       allowNull: false

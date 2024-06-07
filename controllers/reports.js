@@ -3,12 +3,13 @@ const db = require("../models/index");
 module.exports = {
     getReports: async (req, res) => {
         try {
-            const { id } = req.session.profile;
+            const { id } = req.user;
             const reports = await db.reports.findAll({
                 where: {
                     user_id: id
                 },
-                attributes: ['id', 'report_path']
+                attributes: ['report_path', 'report_url'],
+                raw: true
             });
             return res.status(200).json(reports);
         } catch (error) {
