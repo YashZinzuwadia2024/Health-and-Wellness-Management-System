@@ -5,6 +5,7 @@ const main_form = document.getElementById("main_form");
 const radio_inputs = document.getElementById("radio_inputs");
 let pageNoBox = document.getElementById("pageNo");
 let pageNo = Number(document.getElementById("pageNo").innerText);
+const addBtn = document.getElementById("addBtn");
 const socket = io();
 
 // For Pagination
@@ -314,7 +315,12 @@ const handleRecurranceType = (e) => {
     }
 }
 
-const handleAddMedication = async () => {
+main_form.addEventListener("submit", (e) => {
+    e.preventDefault();
+});
+
+addBtn.addEventListener("click", async (e) => {
+    e.preventDefault();
     const types = Array.from(document.getElementsByName("type"));
     types.map(async (type) => {
         if (type.checked) {
@@ -340,9 +346,30 @@ const handleAddMedication = async () => {
                         body.time = input.value;
                     }
                 });
-                const { data } = await axios.post("/medications/addMedication", body);
-                if (!data.success) return alert("Something went wrong!");
-                return location.reload();
+                Swal.fire({
+                    title: "Are you sure?",
+                    icon: "warning",
+                    showCancelButton: true,
+                    confirmButtonColor: "#3085d6",
+                    cancelButtonColor: "#d33",
+                    confirmButtonText: "Yes"
+                }).then(async (result) => {
+                    if (result.isConfirmed) {
+                        const { data } = await axios.post("/medications/addMedication", body);
+                        if (!data.success) return alert("Something went wrong!");
+                        Swal.fire({
+                            text: "Medication Added!",
+                            imageUrl: "/assets/logo.svg",
+                            imageWidth: 400,
+                            imageHeight: 200,
+                            imageAlt: "Custom image"
+                        }).then(() => {
+                            return location.reload();
+                        }).catch(error => {
+                            throw error;
+                        });
+                    }
+                });
             } else if (type.value === 'Recurring') {
                 let inputs = Array.from(document.querySelectorAll(".form-input"));
                 let body = {
@@ -353,10 +380,10 @@ const handleAddMedication = async () => {
                 if (!isEmpty) return alert("Please Provide All Fields");
                 const current_date = new Date().toLocaleDateString();
                 if (new Date(document.getElementById("start_date").value).toLocaleDateString() < current_date) {
-                    return alert("Provide Valid Start Date");
+                    return alert("Provide a valid start date");
                 }
-                if (document.getElementById("start_date").value === document.getElementById("end_date").value) {
-                    return alert("Start Date & End Date Can't Be Equal");
+                if (document.getElementById("start_date").value >= document.getElementById("end_date").value) {
+                    return alert("Start Date & End Date Can't Be Equal Or Greater");
                 }
                 inputs.map(input => {
                     if (input.name == 'medicine_name') {
@@ -373,13 +400,44 @@ const handleAddMedication = async () => {
                         body.time = input.value;
                     }
                 });
-                const { data } = await axios.post("/medications/addMedication", body);
-                if (!data.success) return alert("Something went wrong!");
-                return location.reload();
+                Swal.fire({
+                    title: "Are you sure?",
+                    icon: "warning",
+                    showCancelButton: true,
+                    confirmButtonColor: "#3085d6",
+                    cancelButtonColor: "#d33",
+                    confirmButtonText: "Yes"
+                }).then(async (result) => {
+                    if (result.isConfirmed) {
+                        const { data } = await axios.post("/medications/addMedication", body);
+                        if (!data.success) {
+                            Swal.fire({
+                                icon: "error",
+                                title: "Oops...",
+                                text: "Something went wrong!"
+                            }).then(() => {
+                                return;
+                            }).catch(error => {
+                                throw error;
+                            })
+                        }
+                        Swal.fire({
+                            text: "Medication Added!",
+                            imageUrl: "/assets/logo.svg",
+                            imageWidth: 400,
+                            imageHeight: 200,
+                            imageAlt: "Custom image"
+                        }).then(() => {
+                            return location.reload();
+                        }).catch(error => {
+                            throw error;
+                        });
+                    }
+                });
             }
         }
     })
-}
+})
 
 // Pagination
 

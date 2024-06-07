@@ -19,6 +19,14 @@ form.addEventListener("submit", async (e) => {
         password: password_field.value
     });
     if (!data.success) return;
-    location.href = "/home";
-    return;
+    Swal.fire({
+        title: "Congratulations!",
+        text: "You have logged in successfully!",
+        icon: "success"
+    }).then(() => {
+        location.href = "/home";
+        return;
+    }).catch(error => {
+        throw error;
+    });
 })

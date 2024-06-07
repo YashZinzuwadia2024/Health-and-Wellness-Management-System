@@ -8,6 +8,7 @@
     <script src="/axios/axios.min.js"></script>
     <link rel="stylesheet" href="/icons/bootstrap-icons.css">
     <link rel="stylesheet" href="/css/bootstrap.min.css" />
+    <link href="/sweetalert2/sweetalert2.min.css" rel="stylesheet" />
     <link rel="stylesheet" href="/stylesheets/home.css">
     <link rel="stylesheet" href="/stylesheets/medications.css">
     <title>Health & Wellness Management System | Medications</title>
@@ -54,7 +55,7 @@
                 <button id="rightMost" onclick="rightMost()">>></button>
             </div>
         </div>
-        
+
     </div>
 
     <div id="popupOverlay" class="overlay-container">
@@ -63,15 +64,13 @@
                 <i class="bi bi-capsule"></i>
                 <h5>Add Medication</h2>
             </div>
-            <form class="form-container" id="main_form">
-            </form>
+            <div class="form-container" id="main_form">
+            </div>
             <div class="btns">
-                <button onclick="handleAddMedication()" class="btn-submit" type="submit">
-                    Add
-                </button>
-                <button class="btn-close-popup" onclick="togglePopup()">
+                <span id="addBtn" class="btn-submit">Add</span>
+                <span class="btn-close-popup" onclick="togglePopup()">
                     Close
-                </button>
+                </span>
             </div>
         </div>
     </div>
@@ -79,7 +78,8 @@
 
     <!-- Script -->
 
-    <script src="/socket.io/socket.io.js"></script> 
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="/sweetalert2/sweetalert2.min.js"></script>
     <script src="/javascripts/medications.js"></script>
 
 </body>

@@ -12,7 +12,6 @@ module.exports = {
                 attributes: ['report_path'],
                 raw: true
             });
-            console.log(reports);
             return res.status(200).json(reports);
         } catch (error) {
             console.log(error);

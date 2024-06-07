@@ -38,7 +38,8 @@ module.exports = async (data) => {
             await csvWriter.writeRecords(records);
             const upload_results = await uploadToCloudinary(filePath, { resource_type: 'raw', folder: 'reports' });
             const new_report = await db.reports.create({
-                report_path: upload_results.url,
+                report_url: upload_results.url,
+                report_path: filePath,
                 user_id: user.id
             });
             await new_report.save();
