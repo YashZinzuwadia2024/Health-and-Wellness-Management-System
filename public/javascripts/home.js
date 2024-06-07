@@ -1,6 +1,7 @@
 let medication_count, reports_count;
 const noOfMedications = document.getElementById("noOfMedications");
 const noOfReports = document.getElementById("noOfReports");
+const socket = io();
 
 const getCounts = async () => {
     const results1 = await axios.get("/getCountOfMed");
@@ -27,6 +28,8 @@ const logout = async () => {
 const logout_others = async () => {
     const response = await axios.post("/logout-others");
     if (response.statusText !== "OK") return;
+    let status = response.statusText
+    socket.emit("logout others", status);
     location.href = "/home";
     return;
 }
@@ -34,9 +37,25 @@ const logout_others = async () => {
 const logout_all = async () => {
     const response = await axios.post("/logout-all");
     if (response.statusText !== "OK") return;
+    let status = response.statusText
+    socket.emit("logout all", status);
     location.href = "/";
     return;
 }
+
+socket.on("logout others", status => {
+    if (status) {
+        return location.reload();
+    }
+    return;
+})
+
+socket.on("logout all", status => {
+    if (status) {
+        return location.reload();
+    }
+    return; 
+})
 
 const medicationsPage = () => {
     location.href = "/medicationsPage";

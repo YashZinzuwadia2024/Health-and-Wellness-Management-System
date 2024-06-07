@@ -1,7 +1,9 @@
 const express = require("express");
 const app = express();
+const http = require("http").createServer(app);
 require("dotenv").config();
 const PORT = process.env.PORT || 3500;
+const io = require("socket.io")(http);
 const path = require("path");
 const cookieParser = require("cookie-parser");
 
@@ -23,6 +25,10 @@ app.use(
   express.static(path.join(__dirname, "node_modules/bootstrap-icons/font"))
 );
 app.use("/axios", express.static(path.join(__dirname, "node_modules/axios/dist")));
+app.use(
+  "/sweetalert2",
+  express.static(path.join(__dirname, "node_modules/sweetalert2/dist"))
+);
 app.use("/", express.static(path.join(__dirname, "public")));
 app.set("view engine", "ejs");
 
@@ -38,6 +44,17 @@ require("./config/cloudinary");
 require("./services/weeklyReport");
 const { emailWorker, reportWorker } = require("./services/worker");
 
-app.listen(PORT, () => {
-    console.log(`Server started at http://localhost:${PORT}`);
+// Scocket Configuration
+
+io.on("connection", socket => {
+  socket.on("logout others", status => {
+    io.emit("logout others", status); 
+  });
+  socket.on("logout all", status => {
+    io.emit("logout all", status); 
+  });
+});
+
+http.listen(PORT, () => {
+  console.log(`Server started at http://localhost:${PORT}`);
 })
