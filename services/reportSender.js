@@ -9,12 +9,18 @@ const transporter = nodemailer.createTransport({
     }
 });
 
-const sendMail = (user, data) => {
+const sendMail = (user, reportPath, reportName) => {
     try {
         const mailOptions = {
             from: process.env.TRANSPORTER,
             to: user,
-            subject: 'Weekly Medication Report'
+            subject: 'Weekly Medication Report',
+            attachments: [
+                {
+                    filename: reportName,
+                    path: reportPath
+                }
+            ]
         };
         transporter.sendMail(mailOptions, (error, info) => {
             if (error) {

@@ -30,10 +30,12 @@ app.set("view engine", "ejs");
 
 const routes = require("./routers/index");
 app.use("/", routes);
+require("./utils/getData");
 
 // Cloudinary storage and workers
 
 require("./config/cloudinary");
+require("./services/weeklyReport");
 const { emailWorker, reportWorker } = require("./services/worker");
 
 app.listen(PORT, () => {
