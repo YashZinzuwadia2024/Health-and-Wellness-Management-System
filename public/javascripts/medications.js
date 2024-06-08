@@ -217,8 +217,14 @@ const handleTypeInput = (e) => {
                 <label class="form-label" for="name">
                     Time
                 </label>
-                <input class="form-input" type="time" placeholder="Time" id="time" name="time"
-                required>
+                <div class="hours_mins">
+                    <select class="form-input" id="hours" name="hours" >
+                        <option value="">---Select Hours---</option>
+                    </select>
+                    <select class="form-input" id="mins" name="mins" >
+                        <option value="">---Select Minutes---</option>
+                    </select>
+                </div>
             </div>
         `;
         let fields = document.createElement("div");
@@ -226,6 +232,18 @@ const handleTypeInput = (e) => {
         fields.id = "main_fields";
         fields.innerHTML = input_snippet;
         main_form.append(fields);
+        function createOption(value, text) {
+            const option = document.createElement("option");
+            option.text = text;
+            option.value = value;
+            return option;
+        }
+        for (let i = 1; i < 25; i++) {
+            document.getElementById("hours").add(createOption(i, i));
+        }
+        for (let i = 0; i < 60; i += 30) {
+            document.getElementById("mins").add(createOption(i, i));
+        }
     } else {
         let radio_snippet = `
             <div class="type_select" id="radio_inputs">
@@ -291,8 +309,14 @@ const handleTypeInput = (e) => {
                 <label class="form-label" for="name">
                     Time
                 </label>
-                <input class="form-input" type="time" placeholder="Time" id="time" name="time"
-                required>
+                <div class="hours_mins">
+                    <select class="form-input" id="hours" name="hours" >
+                        <option value="">---Select Hours---</option>
+                    </select>
+                    <select class="form-input" id="mins" name="mins" >
+                        <option value="">---Select Minutes---</option>
+                    </select>
+                </div>
             </div>
         `;
         document.getElementById("main_fields")?.remove();
@@ -301,9 +325,21 @@ const handleTypeInput = (e) => {
         fields.id = "main_fields";
         fields.innerHTML = input_snippet;
         main_form.appendChild(fields);
+        function createOption(value, text) {
+            const option = document.createElement("option");
+            option.text = text;
+            option.value = value;
+            return option;
+        }
+        for (let i = 1; i < 25; i++) {
+            document.getElementById("hours").add(createOption(i, i));
+        }
+        for (let i = 0; i < 60; i += 30) {
+            document.getElementById("mins").add(createOption(i, i));
+        }
         Array.from(document.getElementsByName("recurrance")).forEach(input => {
             input.addEventListener("change", handleRecurranceType)
-        })
+        });
     }
 }
 
@@ -342,8 +378,10 @@ addBtn.addEventListener("click", async (e) => {
                         body.description = input.value;
                     } else if (input.name == 'date') {
                         body.start_date = input.value;
-                    } else {
+                    } else if (input.name == 'hours') {
                         body.time = input.value;
+                    } else {
+                        body.time += (input.value === '0')? ':00' : ':30';
                     }
                 });
                 Swal.fire({
@@ -396,8 +434,10 @@ addBtn.addEventListener("click", async (e) => {
                         body.end_date = input.value;
                     } else if (input.name == 'day') {
                         body.day = input.value;
-                    } else {
+                    } else if (input.name == "hours") {
                         body.time = input.value;
+                    } else {
+                        body.time += (input.value === '0')? ':00' : ':30';
                     }
                 });
                 Swal.fire({

@@ -41,7 +41,6 @@ module.exports = {
             if (!user) return res.status(400).json({ message: "Bad Request!" });
             const passCheck = await bcrypt.compare(password, user.password);
             if (!passCheck) return res.status(400).json({ message: "Invalid Email Or Password!" });
-            console.log(user);
             const token = jwt.sign(user, process.env.SECRET_KEY, {
                 expiresIn: '1h'
             });

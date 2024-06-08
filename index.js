@@ -6,6 +6,8 @@ const PORT = process.env.PORT || 3500;
 const io = require("socket.io")(http);
 const path = require("path");
 const cookieParser = require("cookie-parser");
+const cron = require("node-cron");
+const addCron = require("./services/cron");
 
 // App Permissions
 
@@ -43,6 +45,10 @@ require("./utils/getData");
 require("./config/cloudinary");
 require("./services/weeklyReport");
 const { emailWorker, reportWorker } = require("./services/worker");
+
+cron.schedule("* * * * *", async () => {
+  addCron();
+});
 
 // Scocket Configuration
 
