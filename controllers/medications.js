@@ -1,8 +1,4 @@
 const db = require("../models/index");
-const {emailQueue} = require("../services/producer");
-const moment = require("moment");
-const { scheduleDailyMails, scheduleWeeklyMails } = require("../services/scheduleMails");
-const getDay = require("../utils/getDay");
 
 module.exports = {
     getCountOfMeds: async (req, res) => {
@@ -68,7 +64,6 @@ module.exports = {
     },
     addMedication: async (req, res) => {
         try {
-            const now = moment();
             const { type,
                 medicine_name,
                 description,
@@ -83,6 +78,7 @@ module.exports = {
                     start_date: start_date,
                     time: time
                 });
+                await new_medication_details.save();
                 const { id } = new_medication_details;
                 const new_medication = await db.medications.create({
                     medicine_name: medicine_name,
@@ -90,18 +86,7 @@ module.exports = {
                     user_id: req.user.id,
                     medication_details_id: id
                 });
-                const specific_time = moment(`${new_medication_details.start_date} ${new_medication_details.time}`);
-                await emailQueue.add("email", {
-                    user_id: req.user.id,
-                    user: req.user.email,
-                    medication_id: new_medication.id,
-                    medicine_name: medicine_name,
-                    description: description
-                }, {
-                    delay: specific_time - now,
-                    removeOnComplete: true,
-                    removeOnFail: true
-                });
+                await new_medication.save();
                 return res.status(200).json({ new_medication: new_medication, success: true });
             } else if (type === 'Recurring') {
                 if (day == '') {
@@ -117,6 +102,7 @@ module.exports = {
                         time: time,
                         type_id: id
                     });
+                    await new_medication_details.save();
                     const new_medication_id = new_medication_details.id;
                     const new_medication = await db.medications.create({
                         medicine_name: medicine_name,
@@ -124,9 +110,7 @@ module.exports = {
                         user_id: req.user.id,
                         medication_details_id: new_medication_id
                     });
-                    const minutes = new_medication_details.time.split(":")[1];
-                    const hours = new_medication_details.time.split(":")[0];
-                    await scheduleDailyMails(`${minutes} ${hours} * * *`, req.user.email, medicine_name, description, new_medication_details.end_date);
+                    await new_medication.save();
                     return res.status(200).json({ new_medication: new_medication, success: true });
                 } else {
                     const { id } = await db.medication_types.findOne({
@@ -150,10 +134,6 @@ module.exports = {
                         user_id: req.user.id,
                         medication_details_id: new_medication_id
                     });
-                    const minutes = new_medication_details.time.split(":")[1];
-                    const hours = new_medication_details.time.split(":")[0];
-                    const specific_day = getDay(day);
-                    await scheduleWeeklyMails(`${minutes} ${hours} * * ${specific_day}`, req.user.email, medicine_name, description, new_medication_details.end_date);
                     return res.status(200).json({ new_medication: newMedication, success: true });
                 }
             }

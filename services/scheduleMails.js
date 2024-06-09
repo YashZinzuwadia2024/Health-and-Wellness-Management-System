@@ -1,41 +1,57 @@
+const getDay = require("../utils/getDay");
 const isLastDay = require("../utils/isLastDay");
-const {emailQueue} = require("./producer");
-const cron = require("node-cron");
+const { emailQueue } = require("./producer");
+const moment = require("moment");
 
 module.exports = {
-    scheduleDailyMails: async (exp, medicine_name, description, end_date) => {
-        cron.schedule(exp, async () => {
-            const flag = isLastDay(end_date);
-            if (!flag) {
-                await emailQueue.add("email", {
-                    medicine_name: medicine_name,
-                    description: description
-                }, {
-                    removeOnComplete: true,
-                    removeOnFail: true
-                });
-            } else {
-                return;
-            }
-        });
+    scheduleDailyMails: async (user, medication, record) => {
+        if (moment().format("YYYY-MM-DD") === record.start_date) {
+            await emailQueue.add("email", {
+                user_id: user.id,
+                user: user.email,
+                medication_id: medication.id,
+                medicine_name: medication.medicine_name,
+                description: medication.description
+            }, {
+                removeOnComplete: true,
+                removeOnFail: true
+            });
+            return;
+        }
+        return;
     },
-    scheduleWeeklyMails: async (exp, email, medicine_name, description, end_date) => {
-        cron.schedule(exp, async () => {
-            const flag = isLastDay(end_date);
+    scheduleWeeklyMails: async (user, medication, record) => {
+        if (moment().format("YYYY-MM-DD") >= record.start_date) {
+            const flag = isLastDay(record.end_date);
             if (!flag) {
-                console.log("Ready");
-                await emailQueue.add("email", {
-                    user: email,
-                    medicine_name: medicine_name,
-                    description: description
-                }, {
-                    removeOnComplete: true,
-                    removeOnFail: true
-                });
-            } else {
-                return;
+                if (record.type_id === 1) {
+                    await emailQueue.add("email", {
+                        user_id: user.id,
+                        user: user.email,
+                        medicine_name: medication.medicine_name,
+                        description: medication.description
+                    }, {
+                        removeOnComplete: true,
+                        removeOnFail: true
+                    });
+                    return;
+                } else {
+                    if (moment().weekday() === getDay(record.day)) {
+                        await emailQueue.add("email", {
+                            user_id: user.id,
+                            user: user.email,
+                            medicine_name: medication.medicine_name,
+                            description: medication.description
+                        }, {
+                            removeOnComplete: true,
+                            removeOnFail: true
+                        });
+                    }
+                    return;
+                }
             }
-        });
+            return;
+        }
     }
 }
 
