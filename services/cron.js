@@ -1,13 +1,14 @@
 const { Op } = require("sequelize");
 const db = require("../models/index");
 const { scheduleDailyMails, scheduleWeeklyMails } = require("./scheduleMails");
+const getTime = require("../utils/getTime");
 
 module.exports = async () => {
     try {
         let date = new Date();
         let hours = date.getHours() + 5;
         let mins = date.getMinutes() + 30;
-        let current_time = `${hours}:${mins}:00`;
+        let current_time = getTime(`${hours}:${mins}:00`);
         const users = await db.users.findAll({
             attributes: ['id', 'email'],
             include: [{
@@ -17,11 +18,11 @@ module.exports = async () => {
                 include: [{
                     model: db.medication_details,
                     as: 'details',
-                    // where: {
-                    //     time: {
-                    //         [Op.eq]: current_time
-                    //     }
-                    // },
+                    where: {
+                        time: {
+                            [Op.eq]: current_time
+                        }
+                    },
                     attributes: {
                         exclude: ['id', 'isDone', 'createdAt', 'updatedAt', 'deletedAt']
                     }
