@@ -41,7 +41,7 @@ module.exports = {
                     model: db.medications,
                     as: 'medications',
                     attributes: {
-                        exclude: ['id', 'createdAt', 'updatedAt', 'deletedAt', 'user_id', 'medication_details_id']
+                        exclude: ['createdAt', 'updatedAt', 'deletedAt', 'user_id']
                     },
                     include: [{
                         model: db.medication_details,
@@ -57,6 +57,25 @@ module.exports = {
                 }]
             });
             return res.status(200).json(medications);
+        } catch (error) {
+            console.log(error);
+            return res.status(500).json({ message: "Somthing went wrong!" });
+        }
+    },
+    deleteMedication: async (req, res) => {
+        try {
+            const { medication_id, medication_details_id } = req.body;
+            await db.medications.destroy({
+                where: {
+                    id: medication_id
+                }
+            });
+            await db.medication_details.destroy({
+                where: {
+                    id: medication_details_id
+                }
+            });
+            return res.status(200).json({ success: true });
         } catch (error) {
             console.log(error);
             return res.status(500).json({ message: "Somthing went wrong!" });

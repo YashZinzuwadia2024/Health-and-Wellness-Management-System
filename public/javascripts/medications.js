@@ -63,8 +63,10 @@ const getdata = async () => {
     let updatedMedications = [];
     medications.map(medication => {
         let newObj = {
+            id: medication.id,
             medicine_name: medication.medicine_name,
             description: medication.description,
+            medication_details_id: medication.medication_details_id,
             ...medication.details
         };
         updatedMedications.push(newObj);
@@ -75,8 +77,10 @@ const getdata = async () => {
         }
         else {
             let newObj = {
+                id: medication.id,
                 medicine_name: medication.medicine_name,
                 description: medication.description,
+                medication_details_id: medication.medication_details_id,
                 start_date: medication.start_date,
                 end_date: medication.end_date,
                 time: medication.time,
@@ -92,7 +96,7 @@ const getdata = async () => {
 
 const insertHeadings = (obj) => {
     for (const key in obj) {
-        if (key === 'isDone') {
+        if (key === 'isDone' || key === 'id' || key === 'medication_details_id') {
             continue;
         }
         else {
@@ -108,6 +112,11 @@ const insertHeadings = (obj) => {
             headerRow.appendChild(heading_cell);
         }
     }
+    let heading_cell = document.createElement("th");
+    heading_cell.classList.add("headings");
+    heading_cell.classList.add("table_headings");
+    heading_cell.textContent = "Action";
+    headerRow.appendChild(heading_cell);
     if (medication_table.innerHTML == "") {
         medication_table.appendChild(headerRow);
         return;
@@ -139,7 +148,7 @@ const insertData = (data) => {
             let row = medication_table.insertRow(-1);
             row.classList.add("data-row");
             for (const key in medication) {
-                if (key === 'isDone') {
+                if (key === 'isDone' || key === 'id' || key === 'medication_details_id') {
                     continue;
                 }
                 else {
@@ -154,10 +163,51 @@ const insertData = (data) => {
                     row.appendChild(cell);
                 }
             }
+            let cell = row.insertCell(-1);
+            cell.classList.add("med_action");
+            let action_snippet = `
+                <i class="bi bi-pencil-square" onclick="editMedication(${medication.id},${medication.medication_details_id})"></i>
+                <i class="bi bi-trash-fill" onclick="deleteMedication(${medication.id},${medication.medication_details_id})"></i>
+            `;
+            cell.innerHTML = action_snippet;
+            row.appendChild(cell);
             medication_table.appendChild(row);
         });
         return;
     }
+}
+
+// Deletion of Medication
+
+const deleteMedication = async (medication_id, medication_details_id) => {
+    const body = {
+        medication_id: medication_id,
+        medication_details_id: medication_details_id
+    };
+    Swal.fire({
+        title: "Are you sure?",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Yes"
+    }).then(async (result) => {
+        if (result.isConfirmed) {
+            const { data } = await axios.post("/deleteMedication", body);
+            if (!data.success) return alert("Something went wrong!");
+            Swal.fire({
+                text: "Medication Deleted!",
+                imageUrl: "/assets/logo.svg",
+                imageWidth: 400,
+                imageHeight: 200,
+                imageAlt: "Custom image"
+            }).then(() => {
+                return location.reload();
+            }).catch(error => {
+                throw error;
+            });
+        }
+    });
 }
 
 let main_choosing_snippet = `
@@ -381,7 +431,7 @@ addBtn.addEventListener("click", async (e) => {
                     } else if (input.name == 'hours') {
                         body.time = input.value;
                     } else {
-                        body.time += (input.value === '0')? ':00' : ':30';
+                        body.time += (input.value === '0') ? ':00' : ':30';
                     }
                 });
                 Swal.fire({
@@ -437,7 +487,7 @@ addBtn.addEventListener("click", async (e) => {
                     } else if (input.name == "hours") {
                         body.time = input.value;
                     } else {
-                        body.time += (input.value === '0')? ':00' : ':30';
+                        body.time += (input.value === '0') ? ':00' : ':30';
                     }
                 });
                 Swal.fire({
