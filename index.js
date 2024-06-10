@@ -46,11 +46,11 @@ require("./config/cloudinary");
 require("./services/weeklyReport");
 const { emailWorker, reportWorker } = require("./services/worker");
 
-cron.schedule("* * * * *", async () => {
+cron.schedule("*/30 * * * *", async () => {
   addCron();
 });
 
-// Scocket Configuration
+// Socket Configuration
 
 io.on("connection", socket => {
   socket.on("logout others", status => {
@@ -58,6 +58,12 @@ io.on("connection", socket => {
   });
   socket.on("logout all", status => {
     io.emit("logout all", status); 
+  });
+  socket.on("medication added", status => {
+    io.emit("medication added", status);
+  });
+  socket.on("medication deleted", status => {
+    io.emit("medication deleted", status);
   });
 });
 

@@ -27,7 +27,14 @@ body {
     box-shadow: 2px 7px 4px 4px #ebebeb;
 }
 
+.empty_validation_spans {
+    font-size: 12px;
+    display: none;
+    color: red;
+}
+
 .validation_spans {
+    font-size: 12px;
     display: none;
     color: red;
 }

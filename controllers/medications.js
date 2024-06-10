@@ -41,7 +41,7 @@ module.exports = {
                     model: db.medications,
                     as: 'medications',
                     attributes: {
-                        exclude: ['id', 'createdAt', 'updatedAt', 'deletedAt', 'user_id', 'medication_details_id']
+                        exclude: ['createdAt', 'updatedAt', 'deletedAt', 'user_id']
                     },
                     include: [{
                         model: db.medication_details,
@@ -57,6 +57,128 @@ module.exports = {
                 }]
             });
             return res.status(200).json(medications);
+        } catch (error) {
+            console.log(error);
+            return res.status(500).json({ message: "Somthing went wrong!" });
+        }
+    },
+    getMedication: async (req, res) => {
+        try {
+            const { id } = req.params;
+            const medication = await db.medications.findOne({
+                where: {
+                    id: id
+                },
+                attributes: ['medicine_name', 'description'],
+                include: [{
+                    model: db.medication_details,
+                    as: 'details',
+                    attributes: ['start_date', 'end_date', 'time', 'day', 'type_id']
+                }]
+            });
+            return res.status(200).json(medication);
+        } catch (error) {
+            console.log(error);
+            return res.status(500).json({ success: false, message: "Somthing went wrong!" });
+        }
+    },
+    updateMedication: async (req, res) => {
+        try {
+            console.log(req.body);
+            console.log("id: ", req.params.id);
+            const { id } = req.params;
+            const { medicine_name,
+                description,
+                start_date,
+                end_date,
+                time,
+                day,
+                type_id
+            } = req.body;
+            const medication = await db.medications.findOne({
+                where: {
+                    id: id
+                },
+                attributes: {
+                    exclude: ['createdAt', 'updatedAt', 'deletedAt']
+                }
+            });
+            console.log(medication);
+            medication.medicine_name = medicine_name;
+            medication.description = description;
+            if (type_id === null) {
+                const medication_details = await db.medication_details.findOne({
+                    where: {
+                        id: medication.medication_details_id
+                    }
+                });
+                medication_details.start_date = start_date;
+                medication_details.time = time;
+                await medication.save();
+                await medication_details.save();
+                return res.status(200).json({ success: true, message: "Medication Updated!" });
+            } else if (type === 'Recurring') {
+                if (day == '') {
+                    const { id } = await db.medication_types.findOne({
+                        where: {
+                            name: 'daily'
+                        },
+                        raw: true
+                    });
+                    const medication_details = await db.medication_details.findOne({
+                        where: {
+                            id: medication.medication_details_id
+                        }
+                    });
+                    medication_details.start_date = start_date;
+                    medication_details.end_date = end_date;
+                    medication_details.time = time;
+                    medication_details.type_id = id;
+                    await medication.save();
+                    await medication_details.save();
+                    return res.status(200).josn({ success: true, message: "Medication Updated!" });
+                } else {
+                    const { id } = await db.medication_types.findOne({
+                        attributes: ['id'],
+                        where: {
+                            name: 'weekly'
+                        },
+                        raw: true
+                    });
+                    const medication_details = await db.medication_details.findOne({
+                        where: {
+                            id: medication.medication_details_id
+                        }
+                    });
+                    medication_details.start_date = start_date;
+                    medication_details.end_date = end_date;
+                    medication_details.time = time;
+                    medication_details.day = day;
+                    medication_details.type_id = id;
+                    await medication.save();
+                    await medication_details.save();
+                    return res.status(200).josn({ success: true, message: "Medication Updated!" });
+                }
+            }
+        } catch (error) {
+            console.log(error);
+            return res.status(500).json({ success: false, message: "Somthing went wrong!" });
+        }
+    },
+    deleteMedication: async (req, res) => {
+        try {
+            const { medication_id, medication_details_id } = req.body;
+            await db.medications.destroy({
+                where: {
+                    id: medication_id
+                }
+            });
+            await db.medication_details.destroy({
+                where: {
+                    id: medication_details_id
+                }
+            });
+            return res.status(200).json({ success: true });
         } catch (error) {
             console.log(error);
             return res.status(500).json({ message: "Somthing went wrong!" });

@@ -15,22 +15,7 @@
 </head>
 
 <body>
-    <header class="navbar">
-        <div class="logo">
-            <h3>WeCare!</h3>
-        </div>
-        <div class="actions">
-            <%= `Hi ${name.toUpperCase()}` %>
-                <div class="dropdown">
-                    <i class="bi bi-box-arrow-right"></i>
-                    <div class="dropdown-content">
-                        <p onclick="logout()">Logout</p>
-                        <p onclick="logout_others()">Logout from other devices</p>
-                        <p onclick="logout_all()">Logout from all devices</p>
-                    </div>
-                </div>
-        </div>
-    </header>
+    <%- include('./partials/navbar.ejs') %>
     <div class="container">
         <div class="heading">
             <h2>Medications</h2>
@@ -46,7 +31,7 @@
             </tr>
         </table>
 
-        <div class="pagination">
+        <div class="pagination" id="med_pagination">
             <div class="pagination-box">
                 <button id="leftMost" onclick="leftMost()"><<</button>
                 <button id="left" onclick="left()"><</button>
@@ -60,15 +45,15 @@
 
     <div id="popupOverlay" class="overlay-container">
         <div class="popup-box">
-            <div class="modal_heading">
+            <div class="modal_heading" id="modal_head">
                 <i class="bi bi-capsule"></i>
                 <h5>Add Medication</h2>
             </div>
             <div class="form-container" id="main_form">
             </div>
-            <div class="btns">
+            <div class="btns" id="btn_sec">
                 <span id="addBtn" class="btn-submit">Add</span>
-                <span class="btn-close-popup" onclick="togglePopup()">
+                <span class="btn-close-popup" onclick="closeForm()">
                     Close
                 </span>
             </div>
@@ -80,6 +65,11 @@
 
     <script src="/socket.io/socket.io.js"></script>
     <script src="/sweetalert2/sweetalert2.min.js"></script>
+    <script src="/javascripts/pagination.js"></script>
+    <script src="/javascripts/modal_form.js"></script>
+    <script src="/javascripts/updateMedication.js"></script>
+    <script src="/javascripts/editMedication.js"></script>
+    <script src="/javascripts/addMedication.js"></script>
     <script src="/javascripts/medications.js"></script>
 
 </body>
