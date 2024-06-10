@@ -28,9 +28,17 @@ body {
 }
 
 .validation_spans {
+    font-size: 12px;
     display: none;
     color: red;
 }
+
+.empty_validation_spans {
+    font-size: 12px;
+    display: none;
+    color: red;
+}
+
 
 .container form {
     display: flex;

@@ -62,6 +62,107 @@ module.exports = {
             return res.status(500).json({ message: "Somthing went wrong!" });
         }
     },
+    getMedication: async (req, res) => {
+        try {
+            const { id } = req.params;
+            const medication = await db.medications.findOne({
+                where: {
+                    id: id
+                },
+                attributes: ['medicine_name', 'description'],
+                include: [{
+                    model: db.medication_details,
+                    as: 'details',
+                    attributes: ['start_date', 'end_date', 'time', 'day', 'type_id']
+                }]
+            });
+            return res.status(200).json(medication);
+        } catch (error) {
+            console.log(error);
+            return res.status(500).json({ success: false, message: "Somthing went wrong!" });
+        }
+    },
+    updateMedication: async (req, res) => {
+        try {
+            const id = req.params;
+            const { type,
+                medicine_name,
+                description,
+                start_date,
+                end_date,
+                time,
+                day,
+                isDone
+            } = req.body;
+            const medication = await db.medications.findOne({
+                where: {
+                    id: id
+                },
+                attributes: {
+                    exclude: ['createdAt', 'updatedAt', 'deletedAt']
+                }
+            });
+            medication.medicine_name = medicine_name;
+            medication.description = description;
+            if (type === 'One Time') {
+                const medication_details = await db.medication_details.findOne({
+                    where: {
+                        id: medication.medication_details_id
+                    }
+                });
+                medication_details.start_date = start_date;
+                medication_details.time = time;
+                await medication.save();
+                await medication_details.save();
+                return res.status(200).josn({ success: true, message: "Medication Updated!" });
+            } else if (type === 'Recurring') {
+                if (day == '') {
+                    const { id } = await db.medication_types.findOne({
+                        where: {
+                            name: 'daily'
+                        },
+                        raw: true
+                    });
+                    const medication_details = await db.medication_details.findOne({
+                        where: {
+                            id: medication.medication_details_id
+                        }
+                    });
+                    medication_details.start_date = start_date;
+                    medication_details.end_date = end_date;
+                    medication_details.time = time;
+                    medication_details.type_id = id;
+                    await medication.save();
+                    await medication_details.save();
+                    return res.status(200).josn({ success: true, message: "Medication Updated!" });
+                } else {
+                    const { id } = await db.medication_types.findOne({
+                        attributes: ['id'],
+                        where: {
+                            name: 'weekly'
+                        },
+                        raw: true
+                    });
+                    const medication_details = await db.medication_details.findOne({
+                        where: {
+                            id: medication.medication_details_id
+                        }
+                    });
+                    medication_details.start_date = start_date;
+                    medication_details.end_date = end_date;
+                    medication_details.time = time;
+                    medication_details.day = day;
+                    medication_details.type_id = id;
+                    await medication.save();
+                    await medication_details.save();
+                    return res.status(200).josn({ success: true, message: "Medication Updated!" });
+                }
+            }
+        } catch (error) {
+            console.log(error);
+            return res.status(500).json({ success: false, message: "Somthing went wrong!" });
+        }
+    },
     deleteMedication: async (req, res) => {
         try {
             const { medication_id, medication_details_id } = req.body;

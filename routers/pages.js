@@ -22,6 +22,6 @@ router.get("/medications", authenticateToken, (req, res) => {
 router.get("/reports", authenticateToken, (req ,res) => {
     let name = req.user.first_name;
     res.render("reports", { name });
-})
+});
 
 module.exports = router;

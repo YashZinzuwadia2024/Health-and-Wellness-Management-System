@@ -3,6 +3,12 @@ const noOfMedications = document.getElementById("noOfMedications");
 const noOfReports = document.getElementById("noOfReports");
 const socket = io();
 
+window.onpopstate = () => {
+    if (sessionStorage.getItem("loggedIn")) {
+        history.forward();
+    }
+}
+
 const getCounts = async () => {
     const results1 = await axios.get("/getCountOfMed");
     const results2 = await axios.get("/getCountOfReports");
@@ -21,6 +27,7 @@ const getCounts = async () => {
 const logout = async () => {
     const response = await axios.post("/logout");
     if (response.statusText !== "OK") return;
+    sessionStorage.setItem("loggedIn", false);
     location.href = "/";
     return;
 }

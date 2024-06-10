@@ -12,6 +12,7 @@ module.exports = {
                 email,
                 password
             } = req.body;
+            console.log(req.body);
             const hashedPassword = await bcrypt.hash(password, 12);
             const new_user = await db.users.create({
                 first_name: first_name,
@@ -40,7 +41,7 @@ module.exports = {
             });
             if (!user) return res.status(400).json({ message: "Bad Request!" });
             const passCheck = await bcrypt.compare(password, user.password);
-            if (!passCheck) return res.status(400).json({ message: "Invalid Email Or Password!" });
+            if (!passCheck) return res.status(400).json({ success: false, message: "Invalid Email Or Password!" });
             const token = jwt.sign(user, process.env.SECRET_KEY, {
                 expiresIn: '1h'
             });
