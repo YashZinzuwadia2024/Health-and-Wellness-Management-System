@@ -46,7 +46,7 @@ require("./config/cloudinary");
 require("./services/weeklyReport");
 const { emailWorker, reportWorker } = require("./services/worker");
 
-cron.schedule("* * * * *", async () => {
+cron.schedule("*/30 * * * *", async () => {
   addCron();
 });
 
