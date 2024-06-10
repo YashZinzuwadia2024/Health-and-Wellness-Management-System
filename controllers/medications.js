@@ -84,15 +84,16 @@ module.exports = {
     },
     updateMedication: async (req, res) => {
         try {
-            const id = req.params;
-            const { type,
-                medicine_name,
+            console.log(req.body);
+            console.log("id: ", req.params.id);
+            const { id } = req.params;
+            const { medicine_name,
                 description,
                 start_date,
                 end_date,
                 time,
                 day,
-                isDone
+                type_id
             } = req.body;
             const medication = await db.medications.findOne({
                 where: {
@@ -102,9 +103,10 @@ module.exports = {
                     exclude: ['createdAt', 'updatedAt', 'deletedAt']
                 }
             });
+            console.log(medication);
             medication.medicine_name = medicine_name;
             medication.description = description;
-            if (type === 'One Time') {
+            if (type_id === null) {
                 const medication_details = await db.medication_details.findOne({
                     where: {
                         id: medication.medication_details_id
@@ -114,7 +116,7 @@ module.exports = {
                 medication_details.time = time;
                 await medication.save();
                 await medication_details.save();
-                return res.status(200).josn({ success: true, message: "Medication Updated!" });
+                return res.status(200).json({ success: true, message: "Medication Updated!" });
             } else if (type === 'Recurring') {
                 if (day == '') {
                     const { id } = await db.medication_types.findOne({

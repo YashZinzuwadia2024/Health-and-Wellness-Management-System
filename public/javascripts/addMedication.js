@@ -129,7 +129,7 @@ const addMedication = async (e) => {
                                 return;
                             }).catch(error => {
                                 throw error;
-                            })
+                            });
                         }
                         Swal.fire({
                             position: "top-end",

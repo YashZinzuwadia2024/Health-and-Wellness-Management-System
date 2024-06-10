@@ -14,7 +14,7 @@ module.exports = {
       {
         first_name: "test",
         last_name: "test",
-        email: "test@zinzu.com",
+        email: "test@gmail.com",
         password: "$2b$12$WjdaudmdJBW0deAB4UUA/eak/vXSlB44nRLiIkDL4AJLKC.09WtEu",
         tokenVersion: 0
       },

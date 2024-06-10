@@ -14,22 +14,7 @@
 </head>
 
 <body>
-    <header class="navbar">
-        <div class="logo">
-            <h3>WeCare!</h3>
-        </div>
-        <div class="actions">
-            <%= `Hi ${name.toUpperCase()}` %>
-                <div class="dropdown">
-                    <i class="bi bi-box-arrow-right"></i>
-                    <div class="dropdown-content">
-                        <p onclick="logout()">Logout</p>
-                        <p onclick="logout_others()">Logout from other devices</p>
-                        <p onclick="logout_all()">Logout from all devices</p>
-                    </div>
-                </div>
-        </div>
-    </header>
+    <%- include('./partials/navbar.ejs') %>
     <div class="container">
         <div class="heading">
             <h2>Reports</h2>

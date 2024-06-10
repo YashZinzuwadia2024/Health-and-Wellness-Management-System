@@ -12,7 +12,7 @@ const editMedication = async (medication_id) => {
     const btn_sec = document.getElementById("btn_sec");
     btn_sec.innerHTML = null;
     const new_snippet = `
-        <span id="updateBtn" onclick="updateMedication(${medication_id})" class="btn-submit">Update</span>
+        <span id="updateBtn" onclick="updateMedication(${medication_id}, ${medication.type_id})" class="btn-submit">Update</span>
         <span class="btn-close-popup" onclick="togglePopup()">Close</span>
     `;
     btn_sec.innerHTML = new_snippet;
