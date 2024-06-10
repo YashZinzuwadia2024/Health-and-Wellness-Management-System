@@ -6,6 +6,8 @@ const validation_spans = Array.from(document.querySelectorAll(".validation_spans
 const empty_validation_spans = Array.from(document.querySelectorAll(".empty_validation_spans"));
 const email_regex = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;  
 
+// login 
+
 form.addEventListener("submit", async (e) => {
     e.preventDefault();
     const isEmpty = inputs.every(input => input.value !== '');

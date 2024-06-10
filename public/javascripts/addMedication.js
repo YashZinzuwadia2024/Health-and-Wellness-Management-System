@@ -60,6 +60,8 @@ const addMedication = async (e) => {
                         }).catch(error => {
                             throw error;
                         });
+                        const status = data.success;
+                        socket.emit("medication added", status);
                     }
                 });
             } else if (type.value === 'Recurring') {
@@ -141,6 +143,8 @@ const addMedication = async (e) => {
                         }).catch(error => {
                             throw error;
                         });
+                        const status = data.success;
+                        socket.emit("medication added", status);
                     }
                 });
             }

@@ -9,6 +9,8 @@ const first_name_field = document.getElementById("fname");
 const last_name_field = document.getElementById("lname");
 const password_field = document.getElementById("password");
 
+// registration
+
 form.addEventListener("submit", async (e) => {
     e.preventDefault();
     const isEmpty = inputs.every(input => input.value !== '');
@@ -35,7 +37,6 @@ form.addEventListener("submit", async (e) => {
         email: email_field.value.trim(),
         password: password_field.value.trim()
     });
-    console.log(data);
     if (!data.success) return;
     Swal.fire({
         title: "Congratulations!",

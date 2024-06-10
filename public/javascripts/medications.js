@@ -202,19 +202,24 @@ const deleteMedication = async (medication_id, medication_details_id) => {
             const { data } = await axios.post("/medications/deleteMedication", body);
             if (!data.success) return alert("Something went wrong!");
             Swal.fire({
-                text: "Medication Deleted!",
-                imageUrl: "/assets/logo.svg",
-                imageWidth: 400,
-                imageHeight: 200,
-                imageAlt: "Custom image"
+                position: "top-end",
+                icon: "success",
+                title: "Medication Deleted!",
+                showConfirmButton: false,
+                timer: 1500
             }).then(() => {
-                return location.reload();
+                location.reload();
+                return;
             }).catch(error => {
                 throw error;
             });
+            const status = data.success;
+            socket.emit("medication deleted", status);
         }
     });
 }
+
+// snippet for choosing kind of medication
 
 let main_choosing_snippet = `
         <p>Choose Type of Medication</p>
@@ -247,6 +252,8 @@ function closeForm() {
         return togglePopup();
     }
 }
+
+// pop up form handler for medication insertion
 
 function togglePopup() {
     document.getElementById("radio_inputs")?.remove();

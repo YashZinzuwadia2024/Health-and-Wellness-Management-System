@@ -4,6 +4,8 @@ const data_rows = document.getElementById("data_rows");
 let all_reports;
 const socket = io();
 
+// logout ways
+
 const logout = async () => {
     const response = await axios.post("/logout");
     if (response.statusText !== "OK") return;
@@ -29,6 +31,8 @@ const logout_all = async () => {
     return;
 }
 
+// socket events
+
 socket.on("logout others", status => {
     if (status) {
         return location.reload();
@@ -43,6 +47,8 @@ socket.on("logout all", status => {
     return;
 })
 
+// fetching reports
+
 const getReports = async () => {
     const { data } = await axios.get("/myReports");
     return data;
@@ -52,6 +58,8 @@ const getReports = async () => {
     all_reports = await getReports();
     insertData(all_reports);
 })();
+
+// inserting reports into table
 
 const insertData = (data) => {
     if (data.length === 0) {
@@ -89,6 +97,8 @@ const insertData = (data) => {
         return;
     }
 }
+
+// report download feature
 
 const handleDownload = (url, name) => {
     const link = document.createElement("a");

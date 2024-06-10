@@ -24,6 +24,8 @@ const getCounts = async () => {
     return;
 })();
 
+// logout ways
+
 const logout = async () => {
     const response = await axios.post("/logout");
     if (response.statusText !== "OK") return;
@@ -50,6 +52,8 @@ const logout_all = async () => {
     return;
 }
 
+// socket events
+
 socket.on("logout others", status => {
     if (status) {
         return location.reload();
@@ -61,9 +65,25 @@ socket.on("logout all", status => {
     if (status) {
         return location.reload();
     }
-    return; 
-})
+    return;
+});
 
-const medicationsPage = () => {
-    location.href = "/medicationsPage";
-}
+socket.on("medication added", async status => {
+    if (status) {
+        const { countOfMeds, countOfReports } = await getCounts();
+        noOfMedications.textContent = countOfMeds.count;
+        noOfReports.textContent = countOfReports.count;
+        return;
+    }
+    return;
+});
+
+socket.on("medication deleted", async status => {
+    if (status) {
+        const { countOfMeds, countOfReports } = await getCounts();
+        noOfMedications.textContent = countOfMeds.count;
+        noOfReports.textContent = countOfReports.count;
+        return;
+    }
+    return;
+});
