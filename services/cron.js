@@ -1,14 +1,13 @@
 const { Op } = require("sequelize");
 const db = require("../models/index");
 const { scheduleDailyMails, scheduleWeeklyMails } = require("./scheduleMails");
-const getTime = require("../utils/getTime");
 
 module.exports = async () => {
     try {
-        let date = new Date();
-        let hours = date.getHours() + 5;
-        let mins = date.getMinutes() + 30;
-        let current_time = getTime(`${hours}:${mins}:00`);
+        let today = new Date();
+        let h = today.getHours();
+        let m = today.getMinutes();
+        let current_time = `${h}:${m}:00`;
         const users = await db.users.findAll({
             attributes: ['id', 'email'],
             include: [{
@@ -29,16 +28,13 @@ module.exports = async () => {
                 }]
             }]
         });
-        console.log(users);
         users.forEach(user => {
-            user.medications.forEach(medication => {
-                medication.details.forEach(async record => {
-                    if (record.type_id === null && record.end_date === null) {
-                        await scheduleDailyMails(user, medication, record);
-                    } else {
-                        await scheduleWeeklyMails(user, medication, record);
-                    }
-                });
+            user.medications.forEach(async medication => {
+                if (medication.details.type_id === null && medication.details.end_date === null) {
+                    await scheduleDailyMails(user, medication, medication.details);
+                } else {
+                    await scheduleWeeklyMails(user, medication, medication.details);
+                }
             });
         });
         return;
