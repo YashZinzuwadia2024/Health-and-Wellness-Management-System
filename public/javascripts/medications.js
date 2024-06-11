@@ -200,20 +200,42 @@ const deleteMedication = async (medication_id, medication_details_id) => {
     }).then(async (result) => {
         if (result.isConfirmed) {
             const { data } = await axios.post("/medications/deleteMedication", body);
-            if (!data.success) return alert("Something went wrong!");
-            Swal.fire({
+            if (!data.success) {
+                const Toast = Swal.mixin({
+                    toast: true,
+                    position: "top-end",
+                    showConfirmButton: false,
+                    timer: 800,
+                    timerProgressBar: true,
+                    didOpen: (toast) => {
+                        toast.onmouseenter = Swal.stopTimer;
+                        toast.onmouseleave = Swal.resumeTimer;
+                    }
+                });
+                await Toast.fire({
+                    icon: "error",
+                    title: "Something went wrong!"
+                });
+                return;
+            }
+            const Toast = Swal.mixin({
+                toast: true,
                 position: "top-end",
-                icon: "success",
-                title: "Medication Deleted!",
                 showConfirmButton: false,
-                timer: 1500
-            }).then(() => {
-                return location.reload();
-            }).catch(error => {
-                throw error;
+                timer: 800,
+                timerProgressBar: true,
+                didOpen: (toast) => {
+                    toast.onmouseenter = Swal.stopTimer;
+                    toast.onmouseleave = Swal.resumeTimer;
+                }
+            });
+            await Toast.fire({
+                icon: "success",
+                title: "Medication deleted!"
             });
             const status = data.success;
             socket.emit("medication deleted", status);
+            return location.reload();
         }
     });
 }

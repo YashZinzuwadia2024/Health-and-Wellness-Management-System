@@ -29,6 +29,21 @@ const getCounts = async () => {
 const logout = async () => {
     const response = await axios.post("/logout");
     if (response.statusText !== "OK") return;
+    const Toast = Swal.mixin({
+        toast: true,
+        position: "top-end",
+        showConfirmButton: false,
+        timer: 700,
+        timerProgressBar: true,
+        didOpen: (toast) => {
+            toast.onmouseenter = Swal.stopTimer;
+            toast.onmouseleave = Swal.resumeTimer;
+        }
+    });
+    await Toast.fire({
+        icon: "success",
+        title: "Logout successfull!"
+    });
     sessionStorage.setItem("loggedIn", false);
     location.href = "/";
     return;

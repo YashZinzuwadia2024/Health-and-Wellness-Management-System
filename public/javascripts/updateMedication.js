@@ -8,17 +8,39 @@ const updateMedication = async (medication_id, type_id) => {
     if (!type_id) {
         const isEmpty = inputs.every(input => input.value !== '');
         if (!isEmpty) {
-            await Swal.fire({
+            const Toast = Swal.mixin({
+                toast: true,
+                position: "top-end",
+                showConfirmButton: false,
+                timer: 800,
+                timerProgressBar: true,
+                didOpen: (toast) => {
+                    toast.onmouseenter = Swal.stopTimer;
+                    toast.onmouseleave = Swal.resumeTimer;
+                }
+            });
+            await Toast.fire({
                 icon: "error",
-                text: "Provide all fields"
+                title: "Provide all fields!"
             });
             return;
         }
         const current_date = new Date().toLocaleDateString();
         if (new Date(document.getElementById("date").value).toLocaleDateString() < current_date) {
-            await Swal.fire({
+            const Toast = Swal.mixin({
+                toast: true,
+                position: "top-end",
+                showConfirmButton: false,
+                timer: 800,
+                timerProgressBar: true,
+                didOpen: (toast) => {
+                    toast.onmouseenter = Swal.stopTimer;
+                    toast.onmouseleave = Swal.resumeTimer;
+                }
+            });
+            await Toast.fire({
                 icon: "error",
-                text: "Provide valid date"
+                title: "Provide valid date!"
             });
             return;
         }
@@ -44,16 +66,38 @@ const updateMedication = async (medication_id, type_id) => {
         }
         const isEmpty = required_inputs.every(input => input.value !== '');
         if (!isEmpty) {
-            await Swal.fire({
+            const Toast = Swal.mixin({
+                toast: true,
+                position: "top-end",
+                showConfirmButton: false,
+                timer: 800,
+                timerProgressBar: true,
+                didOpen: (toast) => {
+                    toast.onmouseenter = Swal.stopTimer;
+                    toast.onmouseleave = Swal.resumeTimer;
+                }
+            });
+            await Toast.fire({
                 icon: "error",
-                text: "Provide all fields"
+                title: "Provide all fields!"
             });
             return;
         }
         if (document.getElementById("start_date").value >= document.getElementById("end_date").value) {
-            await Swal.fire({
+            const Toast = Swal.mixin({
+                toast: true,
+                position: "top-end",
+                showConfirmButton: false,
+                timer: 800,
+                timerProgressBar: true,
+                didOpen: (toast) => {
+                    toast.onmouseenter = Swal.stopTimer;
+                    toast.onmouseleave = Swal.resumeTimer;
+                }
+            });
+            await Toast.fire({
                 icon: "error",
-                text: "Start Date & End Date Can't Be Equal Or Greater"
+                title: "Start Date & End Date Can't Be Equal Or Greater"
             });
             return;
         }
@@ -86,19 +130,37 @@ const updateMedication = async (medication_id, type_id) => {
         if (result.isConfirmed) {
             const { data } = await axios.post(`/medications/updateMedication/${medication_id}`, body);
             if (!data.success) {
-                await Swal.fire({
+                const Toast = Swal.mixin({
+                    toast: true,
+                    position: "top-end",
+                    showConfirmButton: false,
+                    timer: 800,
+                    timerProgressBar: true,
+                    didOpen: (toast) => {
+                        toast.onmouseenter = Swal.stopTimer;
+                        toast.onmouseleave = Swal.resumeTimer;
+                    }
+                });
+                await Toast.fire({
                     icon: "error",
-                    title: "Oops...",
-                    text: "Something went wrong!"
+                    title: "Something went wrong!"
                 });
                 return;
             }
-            await Swal.fire({
+            const Toast = Swal.mixin({
+                toast: true,
                 position: "top-end",
-                icon: "success",
-                title: "Medication Updated!",
                 showConfirmButton: false,
-                timer: 1000
+                timer: 800,
+                timerProgressBar: true,
+                didOpen: (toast) => {
+                    toast.onmouseenter = Swal.stopTimer;
+                    toast.onmouseleave = Swal.resumeTimer;
+                }
+            });
+            await Toast.fire({
+                icon: "error",
+                title: "Medication updated!"
             });
             return location.reload();
         }

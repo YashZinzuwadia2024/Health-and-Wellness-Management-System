@@ -32,24 +32,40 @@ form.addEventListener("submit", async (e) => {
             email: email_field.value.trim(),
             password: password_field.value.trim()
         });
-        await Swal.fire({
+        const Toast = Swal.mixin({
+            toast: true,
             position: "top-end",
-            icon: "success",
-            title: "Login Successfull",
             showConfirmButton: false,
-            timer: 1000
+            timer: 1000,
+            timerProgressBar: true,
+            didOpen: (toast) => {
+                toast.onmouseenter = Swal.stopTimer;
+                toast.onmouseleave = Swal.resumeTimer;
+            }
+        });
+        await Toast.fire({
+            icon: "success",
+            title: "Logged in successfully"
         });
         sessionStorage.setItem("loggedIn", true);
         history.pushState(null, null, '/home');
         location.href = "/home";
         return;
     } catch (error) {
-        await Swal.fire({
+        const Toast = Swal.mixin({
+            toast: true,
             position: "top-end",
-            icon: "error",
-            title: "Incorrect email or password",
             showConfirmButton: false,
-            timer: 600
+            timer: 800,
+            timerProgressBar: true,
+            didOpen: (toast) => {
+                toast.onmouseenter = Swal.stopTimer;
+                toast.onmouseleave = Swal.resumeTimer;
+            }
+        });
+        await Toast.fire({
+            icon: "error",
+            title: "Incorrect email or password"
         });
         return;
     }

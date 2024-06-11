@@ -43,14 +43,15 @@ body {
     align-items: center;
 }
 
-.actions i {
+.actions i, .dropdown i {
+    color: rgb(100, 100, 223);
     cursor: pointer;
-    font-size: 20px;
-    transition: 200ms transform;
+    font-size: 24px;
+    transition: 0.4s transform;
 }
 
-.actions i:hover {
-    transform: scale(1.5);
+.actions i:active, .dropdown i:active {
+    transform: scale(0.8);
 }
 
 .dropdown {
