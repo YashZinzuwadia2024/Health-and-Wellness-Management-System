@@ -79,8 +79,8 @@ const addMedication = async (e) => {
                     confirmButtonText: "Yes"
                 }).then(async (result) => {
                     if (result.isConfirmed) {
-                        const { data } = await axios.post("/medications/addMedication", body);
-                        if (!data.success) {
+                        try {
+                            const { data } = await axios.post("/medications/addMedication", body);
                             const Toast = Swal.mixin({
                                 toast: true,
                                 position: "top-end",
@@ -93,29 +93,18 @@ const addMedication = async (e) => {
                                 }
                             });
                             await Toast.fire({
-                                icon: "error",
-                                title: "Something went wrong!"
+                                icon: "success",
+                                title: "Medication added!"
                             });
-                            return;
-                        }
-                        const Toast = Swal.mixin({
-                            toast: true,
-                            position: "top-end",
-                            showConfirmButton: false,
-                            timer: 800,
-                            timerProgressBar: true,
-                            didOpen: (toast) => {
-                                toast.onmouseenter = Swal.stopTimer;
-                                toast.onmouseleave = Swal.resumeTimer;
+                            const status = data.success;
+                            socket.emit("medication added", status);
+                            return location.reload();
+                        } catch (error) {
+                            if (error.response.status == '401') {
+                                location.href = "/";
+                                return;
                             }
-                        });
-                        await Toast.fire({
-                            icon: "success",
-                            title: "Medication added!"
-                        });
-                        const status = data.success;
-                        socket.emit("medication added", status);
-                        return location.reload();
+                        }
                     }
                 });
             } else if (type.value === 'Recurring') {
@@ -206,8 +195,8 @@ const addMedication = async (e) => {
                     confirmButtonText: "Yes"
                 }).then(async (result) => {
                     if (result.isConfirmed) {
-                        const { data } = await axios.post("/medications/addMedication", body);
-                        if (!data.success) {
+                        try {
+                            const { data } = await axios.post("/medications/addMedication", body);
                             const Toast = Swal.mixin({
                                 toast: true,
                                 position: "top-end",
@@ -220,29 +209,16 @@ const addMedication = async (e) => {
                                 }
                             });
                             await Toast.fire({
-                                icon: "error",
-                                title: "Something went wrong!"
+                                icon: "success",
+                                title: "Medication added!"
                             });
+                            const status = data.success;
+                            socket.emit("medication added", status);
+                            return location.reload();
+                        } catch (error) {
+                            location.href = "/";
                             return;
                         }
-                        const Toast = Swal.mixin({
-                            toast: true,
-                            position: "top-end",
-                            showConfirmButton: false,
-                            timer: 800,
-                            timerProgressBar: true,
-                            didOpen: (toast) => {
-                                toast.onmouseenter = Swal.stopTimer;
-                                toast.onmouseleave = Swal.resumeTimer;
-                            }
-                        });
-                        await Toast.fire({
-                            icon: "success",
-                            title: "Medication added!"
-                        });
-                        const status = data.success;
-                        socket.emit("medication added", status);
-                        return location.reload();
                     }
                 });
             }
