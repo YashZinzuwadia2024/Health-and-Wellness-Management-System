@@ -18,9 +18,42 @@ const addMedication = async (e) => {
                 }
                 const current_date = new Date().toLocaleDateString();
                 if (new Date(document.getElementById("date").value).toLocaleDateString() < current_date) {
-                    await Swal.fire({
+                    const Toast = Swal.mixin({
+                        toast: true,
+                        position: "top-end",
+                        showConfirmButton: false,
+                        timer: 800,
+                        timerProgressBar: true,
+                        didOpen: (toast) => {
+                            toast.onmouseenter = Swal.stopTimer;
+                            toast.onmouseleave = Swal.resumeTimer;
+                        }
+                    });
+                    await Toast.fire({
                         icon: "error",
-                        text: "Provide valid date"
+                        title: "Please provide valid date"
+                    });
+                    return;
+                }
+                const hours = new Date().getHours();
+                const mins = new Date().getMinutes();
+                const input_time = new Date(current_date+" "+`${document.getElementById("hours").value}:${document.getElementById("mins").value}`);
+                const test_time = new Date(current_date+" "+`${hours}:${mins}`);
+                if (input_time <= test_time) {
+                    const Toast = Swal.mixin({
+                        toast: true,
+                        position: "top-end",
+                        showConfirmButton: false,
+                        timer: 800,
+                        timerProgressBar: true,
+                        didOpen: (toast) => {
+                            toast.onmouseenter = Swal.stopTimer;
+                            toast.onmouseleave = Swal.resumeTimer;
+                        }
+                    });
+                    await Toast.fire({
+                        icon: "error",
+                        title: "Please provide time greater than now"
                     });
                     return;
                 }
@@ -47,21 +80,42 @@ const addMedication = async (e) => {
                 }).then(async (result) => {
                     if (result.isConfirmed) {
                         const { data } = await axios.post("/medications/addMedication", body);
-                        if (!data.success) return alert("Something went wrong!");
-                        Swal.fire({
-                            position: "top-end",
-                            icon: "success",
-                            title: "Medication Added!",
-                            showConfirmButton: false,
-                            timer: 1500
-                        }).then(() => {
-                            location.reload();
+                        if (!data.success) {
+                            const Toast = Swal.mixin({
+                                toast: true,
+                                position: "top-end",
+                                showConfirmButton: false,
+                                timer: 800,
+                                timerProgressBar: true,
+                                didOpen: (toast) => {
+                                    toast.onmouseenter = Swal.stopTimer;
+                                    toast.onmouseleave = Swal.resumeTimer;
+                                }
+                            });
+                            await Toast.fire({
+                                icon: "error",
+                                title: "Something went wrong!"
+                            });
                             return;
-                        }).catch(error => {
-                            throw error;
+                        }
+                        const Toast = Swal.mixin({
+                            toast: true,
+                            position: "top-end",
+                            showConfirmButton: false,
+                            timer: 800,
+                            timerProgressBar: true,
+                            didOpen: (toast) => {
+                                toast.onmouseenter = Swal.stopTimer;
+                                toast.onmouseleave = Swal.resumeTimer;
+                            }
+                        });
+                        await Toast.fire({
+                            icon: "success",
+                            title: "Medication added!"
                         });
                         const status = data.success;
                         socket.emit("medication added", status);
+                        return location.reload();
                     }
                 });
             } else if (type.value === 'Recurring') {
@@ -72,24 +126,57 @@ const addMedication = async (e) => {
                 let new_sample = inputs.filter(input => input.name !== 'day');
                 const isEmpty = new_sample.every(input => input.value !== '');
                 if (!isEmpty) {
-                    await Swal.fire({
+                    const Toast = Swal.mixin({
+                        toast: true,
+                        position: "top-end",
+                        showConfirmButton: false,
+                        timer: 800,
+                        timerProgressBar: true,
+                        didOpen: (toast) => {
+                            toast.onmouseenter = Swal.stopTimer;
+                            toast.onmouseleave = Swal.resumeTimer;
+                        }
+                    });
+                    await Toast.fire({
                         icon: "error",
-                        text: "Provide all fields"
+                        title: "Please provide all fields!"
                     });
                     return;
                 }
                 const current_date = new Date().toLocaleDateString();
                 if (new Date(document.getElementById("start_date").value).toLocaleDateString() < current_date) {
-                    await Swal.fire({
+                    const Toast = Swal.mixin({
+                        toast: true,
+                        position: "top-end",
+                        showConfirmButton: false,
+                        timer: 800,
+                        timerProgressBar: true,
+                        didOpen: (toast) => {
+                            toast.onmouseenter = Swal.stopTimer;
+                            toast.onmouseleave = Swal.resumeTimer;
+                        }
+                    });
+                    await Toast.fire({
                         icon: "error",
-                        text: "Provide valid start date"
+                        title: "Please provide valid start_date"
                     });
                     return;
                 }
                 if (document.getElementById("start_date").value >= document.getElementById("end_date").value) {
-                    await Swal.fire({
+                    const Toast = Swal.mixin({
+                        toast: true,
+                        position: "top-end",
+                        showConfirmButton: false,
+                        timer: 800,
+                        timerProgressBar: true,
+                        didOpen: (toast) => {
+                            toast.onmouseenter = Swal.stopTimer;
+                            toast.onmouseleave = Swal.resumeTimer;
+                        }
+                    });
+                    await Toast.fire({
                         icon: "error",
-                        text: "Start Date & End Date Can't Be Equal Or Greater"
+                        title: "Start Date & End Date Can't Be Equal Or Greater"
                     });
                     return;
                 }
@@ -121,30 +208,41 @@ const addMedication = async (e) => {
                     if (result.isConfirmed) {
                         const { data } = await axios.post("/medications/addMedication", body);
                         if (!data.success) {
-                            Swal.fire({
-                                icon: "error",
-                                title: "Oops...",
-                                text: "Something went wrong!"
-                            }).then(() => {
-                                return;
-                            }).catch(error => {
-                                throw error;
+                            const Toast = Swal.mixin({
+                                toast: true,
+                                position: "top-end",
+                                showConfirmButton: false,
+                                timer: 800,
+                                timerProgressBar: true,
+                                didOpen: (toast) => {
+                                    toast.onmouseenter = Swal.stopTimer;
+                                    toast.onmouseleave = Swal.resumeTimer;
+                                }
                             });
-                        }
-                        Swal.fire({
-                            position: "top-end",
-                            icon: "success",
-                            title: "Medication Added!",
-                            showConfirmButton: false,
-                            timer: 1500
-                        }).then(() => {
-                            location.reload();
+                            await Toast.fire({
+                                icon: "error",
+                                title: "Something went wrong!"
+                            });
                             return;
-                        }).catch(error => {
-                            throw error;
+                        }
+                        const Toast = Swal.mixin({
+                            toast: true,
+                            position: "top-end",
+                            showConfirmButton: false,
+                            timer: 800,
+                            timerProgressBar: true,
+                            didOpen: (toast) => {
+                                toast.onmouseenter = Swal.stopTimer;
+                                toast.onmouseleave = Swal.resumeTimer;
+                            }
+                        });
+                        await Toast.fire({
+                            icon: "success",
+                            title: "Medication added!"
                         });
                         const status = data.success;
                         socket.emit("medication added", status);
+                        return location.reload();
                     }
                 });
             }

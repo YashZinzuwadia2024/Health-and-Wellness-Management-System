@@ -6,11 +6,39 @@ const radio_inputs = document.getElementById("radio_inputs");
 const addBtn = document.getElementById("addBtn");
 const socket = io();
 
+// Profile Information
+
+const profileBtn = document.getElementById("profileBtn");
+const profile_overlay = document.getElementById("profile_overlay");
+
+profileBtn.addEventListener("click", async () => {
+    profile_overlay.classList.toggle("show");
+    const { data } = await axios.get("/getUser");
+    const { first_name, last_name, email } = data;
+    document.getElementById("email").textContent = email;
+});
+
 // Logout Handler and socket events
 
 const logout = async () => {
     const response = await axios.post("/logout");
     if (response.statusText !== "OK") return;
+    const Toast = Swal.mixin({
+        toast: true,
+        position: "top-end",
+        showConfirmButton: false,
+        timer: 700,
+        timerProgressBar: true,
+        didOpen: (toast) => {
+            toast.onmouseenter = Swal.stopTimer;
+            toast.onmouseleave = Swal.resumeTimer;
+        }
+    });
+    await Toast.fire({
+        icon: "success",
+        title: "Logout successfull!"
+    });
+    sessionStorage.setItem("loggedIn", false);
     location.href = "/";
     return;
 }
@@ -200,21 +228,42 @@ const deleteMedication = async (medication_id, medication_details_id) => {
     }).then(async (result) => {
         if (result.isConfirmed) {
             const { data } = await axios.post("/medications/deleteMedication", body);
-            if (!data.success) return alert("Something went wrong!");
-            Swal.fire({
-                position: "top-end",
-                icon: "success",
-                title: "Medication Deleted!",
-                showConfirmButton: false,
-                timer: 1500
-            }).then(() => {
-                location.reload();
+            if (!data.success) {
+                const Toast = Swal.mixin({
+                    toast: true,
+                    position: "top-end",
+                    showConfirmButton: false,
+                    timer: 800,
+                    timerProgressBar: true,
+                    didOpen: (toast) => {
+                        toast.onmouseenter = Swal.stopTimer;
+                        toast.onmouseleave = Swal.resumeTimer;
+                    }
+                });
+                await Toast.fire({
+                    icon: "error",
+                    title: "Something went wrong!"
+                });
                 return;
-            }).catch(error => {
-                throw error;
+            }
+            const Toast = Swal.mixin({
+                toast: true,
+                position: "top-end",
+                showConfirmButton: false,
+                timer: 800,
+                timerProgressBar: true,
+                didOpen: (toast) => {
+                    toast.onmouseenter = Swal.stopTimer;
+                    toast.onmouseleave = Swal.resumeTimer;
+                }
+            });
+            await Toast.fire({
+                icon: "success",
+                title: "Medication deleted!"
             });
             const status = data.success;
             socket.emit("medication deleted", status);
+            return location.reload();
         }
     });
 }

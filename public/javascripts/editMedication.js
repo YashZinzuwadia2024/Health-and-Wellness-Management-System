@@ -3,8 +3,68 @@ const editMedication = async (medication_id) => {
     const medication = {
         medicine_name: data.medicine_name,
         description: data.description,
+        medication_details_id: data.medication_details_id,
         ...data.details
     };
+    const current_date = new Date().toLocaleDateString();
+    if ((new Date(medication.start_date).toLocaleDateString() < current_date &&
+        medication.type_id === null && medication.end_date === null) || 
+        (new Date(medication.end_date).toLocaleDateString() < current_date && medication.end_date !== null)) {
+
+        await Swal.fire({
+            text: "This Medication has already been completed, Do you want to delete it?",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#3085d6",
+            cancelButtonColor: "#d33",
+            confirmButtonText: "Yes, delete it!"
+        }).then(async result => {
+            if (result.isConfirmed) {
+                const body = {
+                    medication_id: medication_id,
+                    medication_details_id: medication.medication_details_id
+                }
+                const { data } = await axios.post("/medications/deleteMedication", body);
+                if (!data.success) {
+                    const Toast = Swal.mixin({
+                        toast: true,
+                        position: "top-end",
+                        showConfirmButton: false,
+                        timer: 800,
+                        timerProgressBar: true,
+                        didOpen: (toast) => {
+                            toast.onmouseenter = Swal.stopTimer;
+                            toast.onmouseleave = Swal.resumeTimer;
+                        }
+                    });
+                    await Toast.fire({
+                        icon: "error",
+                        title: "Something went wrong!"
+                    });
+                    return;
+                }
+                const Toast = Swal.mixin({
+                    toast: true,
+                    position: "top-end",
+                    showConfirmButton: false,
+                    timer: 800,
+                    timerProgressBar: true,
+                    didOpen: (toast) => {
+                        toast.onmouseenter = Swal.stopTimer;
+                        toast.onmouseleave = Swal.resumeTimer;
+                    }
+                });
+                await Toast.fire({
+                    icon: "success",
+                    title: "Medication deleted!"
+                });
+                const status = data.success;
+                socket.emit("medication deleted", status);
+                return location.reload();
+            }
+        });
+        return;
+    }
     document.querySelector("#modal_head h5").textContent = "Update Medication";
     const overlay = document.getElementById('popupOverlay');
     overlay.classList.toggle('show');
@@ -12,7 +72,7 @@ const editMedication = async (medication_id) => {
     const btn_sec = document.getElementById("btn_sec");
     btn_sec.innerHTML = null;
     const new_snippet = `
-        <span id="updateBtn" onclick="updateMedication(${medication_id}, ${medication.type_id})" class="btn-submit">Update</span>
+        <span id="updateBtn" onclick="updateMedication(${medication_id}, ${medication.type_id}, ${medication.medication_details_id})" class="btn-submit">Update</span>
         <span class="btn-close-popup" onclick="togglePopup()">Close</span>
     `;
     btn_sec.innerHTML = new_snippet;

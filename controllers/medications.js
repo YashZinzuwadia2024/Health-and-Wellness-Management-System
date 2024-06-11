@@ -1,4 +1,6 @@
 const db = require("../models/index");
+const getMedicationsOfUser = require("../utils/getMedications");
+const getMedicationById = require("../utils/getMedicationById");
 
 module.exports = {
     getCountOfMeds: async (req, res) => {
@@ -30,32 +32,7 @@ module.exports = {
     getMedications: async (req, res) => {
         try {
             const user_id = req.user.id;
-            let { medications } = await db.users.findOne({
-                attributes: {
-                    exclude: ['id', 'first_name', 'last_name', 'email', 'password', 'createdAt', 'updatedAt', 'deletedAt']
-                },
-                where: {
-                    id: user_id
-                },
-                include: [{
-                    model: db.medications,
-                    as: 'medications',
-                    attributes: {
-                        exclude: ['createdAt', 'updatedAt', 'deletedAt', 'user_id']
-                    },
-                    include: [{
-                        model: db.medication_details,
-                        as: 'details',
-                        attributes: {
-                            exclude: ['id', 'createdAt', 'updatedAt', 'deletedAt', 'type_id']
-                        },
-                        include: [{
-                            model: db.medication_types,
-                            attributes: ['name']
-                        }]
-                    }]
-                }]
-            });
+            const medications = await getMedicationsOfUser(user_id);
             return res.status(200).json(medications);
         } catch (error) {
             console.log(error);
@@ -65,17 +42,7 @@ module.exports = {
     getMedication: async (req, res) => {
         try {
             const { id } = req.params;
-            const medication = await db.medications.findOne({
-                where: {
-                    id: id
-                },
-                attributes: ['medicine_name', 'description'],
-                include: [{
-                    model: db.medication_details,
-                    as: 'details',
-                    attributes: ['start_date', 'end_date', 'time', 'day', 'type_id']
-                }]
-            });
+            const medication = await getMedicationById(id);
             return res.status(200).json(medication);
         } catch (error) {
             console.log(error);
@@ -84,8 +51,6 @@ module.exports = {
     },
     updateMedication: async (req, res) => {
         try {
-            console.log(req.body);
-            console.log("id: ", req.params.id);
             const { id } = req.params;
             const { medicine_name,
                 description,
@@ -103,7 +68,6 @@ module.exports = {
                     exclude: ['createdAt', 'updatedAt', 'deletedAt']
                 }
             });
-            console.log(medication);
             medication.medicine_name = medicine_name;
             medication.description = description;
             if (type_id === null) {
@@ -117,8 +81,8 @@ module.exports = {
                 await medication.save();
                 await medication_details.save();
                 return res.status(200).json({ success: true, message: "Medication Updated!" });
-            } else if (type === 'Recurring') {
-                if (day == '') {
+            } else {
+                if (day === undefined) {
                     const { id } = await db.medication_types.findOne({
                         where: {
                             name: 'daily'
@@ -133,10 +97,11 @@ module.exports = {
                     medication_details.start_date = start_date;
                     medication_details.end_date = end_date;
                     medication_details.time = time;
+                    medication_details.day = null;
                     medication_details.type_id = id;
                     await medication.save();
                     await medication_details.save();
-                    return res.status(200).josn({ success: true, message: "Medication Updated!" });
+                    return res.status(200).json({ success: true, message: "Medication Updated!" });
                 } else {
                     const { id } = await db.medication_types.findOne({
                         attributes: ['id'],
@@ -157,7 +122,7 @@ module.exports = {
                     medication_details.type_id = id;
                     await medication.save();
                     await medication_details.save();
-                    return res.status(200).josn({ success: true, message: "Medication Updated!" });
+                    return res.status(200).json({ success: true, message: "Medication Updated!" });
                 }
             }
         } catch (error) {

@@ -22,20 +22,36 @@ body {
     background-color: whitesmoke;
 }
 
+.navbar .logo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.logo img {
+    height: 45px;
+}
+
+.logo h4 {
+    font-size: 20px;
+    font-style: normal;
+}
+
 .actions {
     display: flex;
     gap: 25px;
     align-items: center;
 }
 
-.actions i {
+.actions i, .dropdown i {
+    color: rgb(100, 100, 223);
     cursor: pointer;
-    font-size: 20px;
-    transition: 200ms transform;
+    font-size: 24px;
+    transition: 0.4s transform;
 }
 
-.actions i:hover {
-    transform: scale(1.5);
+.actions i:active, .dropdown i:active {
+    transform: scale(0.8);
 }
 
 .dropdown {

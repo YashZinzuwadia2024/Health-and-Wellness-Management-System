@@ -3,6 +3,18 @@ const noOfMedications = document.getElementById("noOfMedications");
 const noOfReports = document.getElementById("noOfReports");
 const socket = io();
 
+// Profile Information
+
+const profileBtn = document.getElementById("profileBtn");
+const profile_overlay = document.getElementById("profile_overlay");
+
+profileBtn.addEventListener("click", async () => {
+    profile_overlay.classList.toggle("show");
+    const { data } = await axios.get("/getUser");
+    const { first_name, last_name, email } = data;
+    document.getElementById("email").textContent = email;
+});
+
 window.onpopstate = () => {
     if (sessionStorage.getItem("loggedIn")) {
         history.forward();
@@ -29,6 +41,21 @@ const getCounts = async () => {
 const logout = async () => {
     const response = await axios.post("/logout");
     if (response.statusText !== "OK") return;
+    const Toast = Swal.mixin({
+        toast: true,
+        position: "top-end",
+        showConfirmButton: false,
+        timer: 700,
+        timerProgressBar: true,
+        didOpen: (toast) => {
+            toast.onmouseenter = Swal.stopTimer;
+            toast.onmouseleave = Swal.resumeTimer;
+        }
+    });
+    await Toast.fire({
+        icon: "success",
+        title: "Logout successfull!"
+    });
     sessionStorage.setItem("loggedIn", false);
     location.href = "/";
     return;

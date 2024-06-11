@@ -37,15 +37,39 @@ form.addEventListener("submit", async (e) => {
         email: email_field.value.trim(),
         password: password_field.value.trim()
     });
-    if (!data.success) return;
-    Swal.fire({
-        title: "Congratulations!",
-        text: "You have registered successfully!",
-        icon: "success"
-    }).then(() => {
-        location.href = "/";
+    if (!data.success) {
+        const Toast = Swal.mixin({
+            toast: true,
+            position: "top-end",
+            showConfirmButton: false,
+            timer: 800,
+            timerProgressBar: true,
+            didOpen: (toast) => {
+                toast.onmouseenter = Swal.stopTimer;
+                toast.onmouseleave = Swal.resumeTimer;
+            }
+        });
+        await Toast.fire({
+            icon: "error",
+            title: "Something went wrong!"
+        });
         return;
-    }).catch(error => {
-        throw error;
+    }
+    const Toast = Swal.mixin({
+        toast: true,
+        position: "top-end",
+        showConfirmButton: false,
+        timer: 800,
+        timerProgressBar: true,
+        didOpen: (toast) => {
+            toast.onmouseenter = Swal.stopTimer;
+            toast.onmouseleave = Swal.resumeTimer;
+        }
     });
+    await Toast.fire({
+        icon: "success",
+        title: "Registered successfully!"
+    });
+    location.href = "/";
+    return;
 });

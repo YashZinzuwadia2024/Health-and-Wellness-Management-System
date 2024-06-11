@@ -1,4 +1,3 @@
-const Redis = require("ioredis");
 require("dotenv").config();
 
 const redisConfig = {
