@@ -12,7 +12,6 @@ module.exports = {
                 email,
                 password
             } = req.body;
-            console.log(req.body);
             const hashedPassword = await bcrypt.hash(password, 12);
             const new_user = await db.users.create({
                 first_name: first_name,
@@ -104,6 +103,21 @@ module.exports = {
             await user.save();
             res.clearCookie("token");
             return res.status(204).redirect("/");
+        } catch (error) {
+            console.log(error);
+            return res.status(500).json({ message: "Something went wrong!" });
+        }
+    },
+    getUser: async (req, res) => {
+        try {
+            const user = await db.users.findOne({
+                where: {
+                    id: req.user.id
+                },
+                attributes: ['first_name', 'last_name', 'email'],
+                raw: true
+            });
+            return res.status(200).json(user);
         } catch (error) {
             console.log(error);
             return res.status(500).json({ message: "Something went wrong!" });

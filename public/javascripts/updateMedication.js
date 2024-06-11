@@ -159,7 +159,7 @@ const updateMedication = async (medication_id, type_id) => {
                 }
             });
             await Toast.fire({
-                icon: "error",
+                icon: "success",
                 title: "Medication updated!"
             });
             return location.reload();

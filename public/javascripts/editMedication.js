@@ -8,7 +8,9 @@ const editMedication = async (medication_id) => {
     };
     const current_date = new Date().toLocaleDateString();
     if ((new Date(medication.start_date).toLocaleDateString() < current_date &&
-        medication.type_id === null) || (new Date(medication.end_date).toLocaleDateString() < current_date)) {
+        medication.type_id === null && medication.end_date === null) || 
+        (new Date(medication.end_date).toLocaleDateString() < current_date && medication.end_date !== null)) {
+
         await Swal.fire({
             text: "This Medication has already been completed, Do you want to delete it?",
             icon: "warning",
@@ -24,19 +26,37 @@ const editMedication = async (medication_id) => {
                 }
                 const { data } = await axios.post("/medications/deleteMedication", body);
                 if (!data.success) {
-                    await Swal.fire({
+                    const Toast = Swal.mixin({
+                        toast: true,
+                        position: "top-end",
+                        showConfirmButton: false,
+                        timer: 800,
+                        timerProgressBar: true,
+                        didOpen: (toast) => {
+                            toast.onmouseenter = Swal.stopTimer;
+                            toast.onmouseleave = Swal.resumeTimer;
+                        }
+                    });
+                    await Toast.fire({
                         icon: "error",
-                        title: "Oops...",
-                        text: "Something went wrong!"
+                        title: "Something went wrong!"
                     });
                     return;
                 }
-                await Swal.fire({
+                const Toast = Swal.mixin({
+                    toast: true,
                     position: "top-end",
-                    icon: "success",
-                    title: "Medication Deleted!",
                     showConfirmButton: false,
-                    timer: 1000
+                    timer: 800,
+                    timerProgressBar: true,
+                    didOpen: (toast) => {
+                        toast.onmouseenter = Swal.stopTimer;
+                        toast.onmouseleave = Swal.resumeTimer;
+                    }
+                });
+                await Toast.fire({
+                    icon: "success",
+                    title: "Medication deleted!"
                 });
                 const status = data.success;
                 socket.emit("medication deleted", status);
@@ -213,7 +233,7 @@ const editMedication = async (medication_id) => {
             option.text = text;
             option.value = value;
             return option;
-        }   
+        }
         for (let i = 1; i < 25; i++) {
             const option = createOption(i, i);
             if (i == medication.time.split(":")[0]) {

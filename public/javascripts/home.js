@@ -3,6 +3,18 @@ const noOfMedications = document.getElementById("noOfMedications");
 const noOfReports = document.getElementById("noOfReports");
 const socket = io();
 
+// Profile Information
+
+const profileBtn = document.getElementById("profileBtn");
+const profile_overlay = document.getElementById("profile_overlay");
+
+profileBtn.addEventListener("click", async () => {
+    profile_overlay.classList.toggle("show");
+    const { data } = await axios.get("/getUser");
+    const { first_name, last_name, email } = data;
+    document.getElementById("email").textContent = email;
+});
+
 window.onpopstate = () => {
     if (sessionStorage.getItem("loggedIn")) {
         history.forward();

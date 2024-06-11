@@ -51,7 +51,6 @@ module.exports = {
     },
     updateMedication: async (req, res) => {
         try {
-            console.log(req.body);
             const { id } = req.params;
             const { medicine_name,
                 description,

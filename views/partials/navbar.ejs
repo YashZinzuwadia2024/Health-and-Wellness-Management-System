@@ -1,13 +1,13 @@
 <header class="navbar">
-    <div class="logo">
-        <a href="/home">
+    <a style="text-decoration: none;color: black;" href="/home">
+            <div class="logo">
             <img src="/assets/logo.svg" alt="">
-        </a>
-        <h4>WeCare!</h4>
-    </div>
+            <h4>WeCare!</h4>
+        </div>
+    </a>
     <div class="actions">
         <%= `Hi ${name.toUpperCase()}` %>
-        <i class="bi bi-person-circle"></i>
+        <i id="profileBtn" class="bi bi-person-circle"></i>
         <div class="dropdown">
             <i class="bi bi-box-arrow-right"></i>
             <div class="dropdown-content">
