@@ -128,8 +128,8 @@ const updateMedication = async (medication_id, type_id) => {
         confirmButtonText: "Yes"
     }).then(async (result) => {
         if (result.isConfirmed) {
-            const { data } = await axios.post(`/medications/updateMedication/${medication_id}`, body);
-            if (!data.success) {
+            try {
+                const { data } = await axios.post(`/medications/updateMedication/${medication_id}`, body);
                 const Toast = Swal.mixin({
                     toast: true,
                     position: "top-end",
@@ -142,27 +142,14 @@ const updateMedication = async (medication_id, type_id) => {
                     }
                 });
                 await Toast.fire({
-                    icon: "error",
-                    title: "Something went wrong!"
+                    icon: "success",
+                    title: "Medication updated!"
                 });
+                return location.reload();
+            } catch (error) {
+                location.href = "/";
                 return;
             }
-            const Toast = Swal.mixin({
-                toast: true,
-                position: "top-end",
-                showConfirmButton: false,
-                timer: 800,
-                timerProgressBar: true,
-                didOpen: (toast) => {
-                    toast.onmouseenter = Swal.stopTimer;
-                    toast.onmouseleave = Swal.resumeTimer;
-                }
-            });
-            await Toast.fire({
-                icon: "success",
-                title: "Medication updated!"
-            });
-            return location.reload();
         }
     });
 }

@@ -5,20 +5,20 @@ const db = require("../models/index");
 const authenticateToken = (req, res, next) => {
     try {
         const token = req.cookies.token;
-        if (!token) return res.status(403).redirect("/");
-        if (isBlacklisted(token)) return res.status(403).redirect("/");
+        if (!token) return res.redirect("/");
+        if (isBlacklisted(token)) return res.redirect("/");
 
         jwt.verify(token, process.env.SECRET_KEY, async (err, user) => {
             if (err) {
                 console.log(err);
-                return res.status(200).redirect("/");
+                return res.redirect("/");
             }
             const dbUser = await db.users.findOne({
                 where: {
                     id: user.id
                 }
             });
-            if (user.tokenVersion !== dbUser.tokenVersion) return res.status(400).redirect("/");
+            if (user.tokenVersion !== dbUser.tokenVersion) return res.redirect("/");
             req.user = user;
             return next();
         });

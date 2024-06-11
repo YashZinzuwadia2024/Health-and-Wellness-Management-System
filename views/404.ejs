@@ -15,9 +15,26 @@
     display: flex;
     justify-content: center;
   }
+  a {
+    background-color: rgb(100, 100, 223);
+    color: #fff;
+    padding: 9px 14px;
+    height: fit-content;
+    text-decoration: none;
+    transition: 0.4s all;
+  }
+  a:hover {
+    opacity: 0.8;
+  }
+  a:active {
+    transform: scale(0.8);
+  }
 </style>
 <body>
   <dotlottie-player src="https://lottie.host/2f661151-ee53-49fa-ac61-7d8323e50f68/Mus5fe9cNQ.json" background="transparent" speed="1" loop autoplay></dotlottie-player>
+  <div style="display: flex;justify-content: end;">
+    <a href="/home">Go to Home Page</a>
+  </div>
   <script src="https://unpkg.com/@dotlottie/player-component@latest/dist/dotlottie-player.mjs" type="module"></script> 
 </body>
 </html>
