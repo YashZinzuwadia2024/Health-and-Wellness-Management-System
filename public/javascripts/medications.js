@@ -208,8 +208,7 @@ const deleteMedication = async (medication_id, medication_details_id) => {
                 showConfirmButton: false,
                 timer: 1500
             }).then(() => {
-                location.reload();
-                return;
+                return location.reload();
             }).catch(error => {
                 throw error;
             });

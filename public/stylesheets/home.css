@@ -22,6 +22,21 @@ body {
     background-color: whitesmoke;
 }
 
+.navbar .logo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.logo img {
+    height: 45px;
+}
+
+.logo h4 {
+    font-size: 20px;
+    font-style: normal;
+}
+
 .actions {
     display: flex;
     gap: 25px;
