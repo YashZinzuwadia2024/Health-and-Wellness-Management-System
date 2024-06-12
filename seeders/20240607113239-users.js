@@ -8,14 +8,14 @@ module.exports = {
         first_name: "Yash",
         last_name: "Zinzuwadia",
         email: "yash@zinzu.com",
-        password: "$2b$12$78Qed2GV9DQeMH4CYlXYyefsl0aR66h/IShe53ll3/e56DwSxLF1i",
+        password: "$2b$12$78Qed2GV9DQeMH4CYlXYyefsl0aR66h/IShe53ll3/e56DwSxLF1i", // yash
         tokenVersion: 0
       },
       {
         first_name: "test",
         last_name: "test",
         email: "test@gmail.com",
-        password: "$2b$12$WjdaudmdJBW0deAB4UUA/eak/vXSlB44nRLiIkDL4AJLKC.09WtEu",
+        password: "$2b$12$WjdaudmdJBW0deAB4UUA/eak/vXSlB44nRLiIkDL4AJLKC.09WtEu", // test
         tokenVersion: 0
       },
     ])
