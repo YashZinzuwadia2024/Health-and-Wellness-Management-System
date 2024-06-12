@@ -3,11 +3,11 @@ const addMedication = async (e) => {
     const types = Array.from(document.getElementsByName("type"));
     types.map(async (type) => {
         if (type.checked) {
+            let inputs = Array.from(document.querySelectorAll(".form-input"));
+            let body = {
+                type: type.value
+            };
             if (type.value === "One Time") {
-                let inputs = Array.from(document.querySelectorAll(".form-input"));
-                let body = {
-                    type: type.value
-                };
                 const isEmpty = inputs.every(input => input.value !== '');
                 if (!isEmpty) {
                     await Swal.fire({
@@ -70,48 +70,7 @@ const addMedication = async (e) => {
                         body.time += (input.value === '0') ? ':00' : ':30';
                     }
                 });
-                Swal.fire({
-                    title: "Are you sure?",
-                    icon: "warning",
-                    showCancelButton: true,
-                    confirmButtonColor: "#3085d6",
-                    cancelButtonColor: "#d33",
-                    confirmButtonText: "Yes"
-                }).then(async (result) => {
-                    if (result.isConfirmed) {
-                        try {
-                            const { data } = await axios.post("/medications/addMedication", body);
-                            const Toast = Swal.mixin({
-                                toast: true,
-                                position: "top-end",
-                                showConfirmButton: false,
-                                timer: 800,
-                                timerProgressBar: true,
-                                didOpen: (toast) => {
-                                    toast.onmouseenter = Swal.stopTimer;
-                                    toast.onmouseleave = Swal.resumeTimer;
-                                }
-                            });
-                            await Toast.fire({
-                                icon: "success",
-                                title: "Medication added!"
-                            });
-                            const status = data.success;
-                            socket.emit("medication added", status);
-                            return location.reload();
-                        } catch (error) {
-                            if (error.response.status == '401') {
-                                location.href = "/";
-                                return;
-                            }
-                        }
-                    }
-                });
             } else if (type.value === 'Recurring') {
-                let inputs = Array.from(document.querySelectorAll(".form-input"));
-                let body = {
-                    type: type.value
-                };
                 let new_sample = inputs.filter(input => input.name !== 'day');
                 const isEmpty = new_sample.every(input => input.value !== '');
                 if (!isEmpty) {
@@ -186,42 +145,42 @@ const addMedication = async (e) => {
                         body.time += (input.value === '0') ? ':00' : ':30';
                     }
                 });
-                Swal.fire({
-                    title: "Are you sure?",
-                    icon: "warning",
-                    showCancelButton: true,
-                    confirmButtonColor: "#3085d6",
-                    cancelButtonColor: "#d33",
-                    confirmButtonText: "Yes"
-                }).then(async (result) => {
-                    if (result.isConfirmed) {
-                        try {
-                            const { data } = await axios.post("/medications/addMedication", body);
-                            const Toast = Swal.mixin({
-                                toast: true,
-                                position: "top-end",
-                                showConfirmButton: false,
-                                timer: 800,
-                                timerProgressBar: true,
-                                didOpen: (toast) => {
-                                    toast.onmouseenter = Swal.stopTimer;
-                                    toast.onmouseleave = Swal.resumeTimer;
-                                }
-                            });
-                            await Toast.fire({
-                                icon: "success",
-                                title: "Medication added!"
-                            });
-                            const status = data.success;
-                            socket.emit("medication added", status);
-                            return location.reload();
-                        } catch (error) {
-                            location.href = "/";
-                            return;
-                        }
-                    }
-                });
             }
+            Swal.fire({
+                title: "Are you sure?",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#3085d6",
+                cancelButtonColor: "#d33",
+                confirmButtonText: "Yes"
+            }).then(async (result) => {
+                if (result.isConfirmed) {
+                    try {
+                        const { data } = await axios.post("/medications/addMedication", body);
+                        const Toast = Swal.mixin({
+                            toast: true,
+                            position: "top-end",
+                            showConfirmButton: false,
+                            timer: 800,
+                            timerProgressBar: true,
+                            didOpen: (toast) => {
+                                toast.onmouseenter = Swal.stopTimer;
+                                toast.onmouseleave = Swal.resumeTimer;
+                            }
+                        });
+                        await Toast.fire({
+                            icon: "success",
+                            title: "Medication added!"
+                        });
+                        const status = data.success;
+                        socket.emit("medication added", status);
+                        return location.reload();
+                    } catch (error) {
+                        location.href = "/";
+                        return;
+                    }
+                }
+            });
         }
     })
 }

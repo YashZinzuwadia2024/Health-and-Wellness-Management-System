@@ -9,7 +9,7 @@ const first_name_field = document.getElementById("fname");
 const last_name_field = document.getElementById("lname");
 const password_field = document.getElementById("password");
 
-// registration
+// user registration
 
 form.addEventListener("submit", async (e) => {
     e.preventDefault();
