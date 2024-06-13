@@ -68,5 +68,5 @@ io.on("connection", socket => {
 });
 
 http.listen(PORT, () => {
-  console.log(`Server started at http://localhost:${PORT}`);
+  console.log(`Server started at http://192.168.22.39:${PORT}`);
 })

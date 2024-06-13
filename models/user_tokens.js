@@ -30,12 +30,12 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: false
     },
     token: {
-      type: DataTypes.STRING,
+      type: DataTypes.TEXT,
       allowNull: false
     },
     logged_in: {
       allowNull: false,
-      type: Sequelize.TINYINT,
+      type: DataTypes.TINYINT,
       defaultValue: 1
     },
   }, {

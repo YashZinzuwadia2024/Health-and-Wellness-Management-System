@@ -22,7 +22,7 @@ module.exports = {
         allowNull: false
       },
       token: {
-        type: Sequelize.STRING,
+        type: Sequelize.TEXT,
         allowNull: false
       },
       logged_in: {

@@ -44,6 +44,12 @@ module.exports = {
             const token = jwt.sign(user, process.env.SECRET_KEY, {
                 expiresIn: '1h'
             });
+            const new_login = await db.user_tokens.create({
+                user_id: user.id,
+                device_IP: req.socket.remoteAddress,
+                token: token
+            });
+            await new_login.save();
             res.cookie('token', token, {
                 httpOnly: true,
                 sameSite: 'strict',
