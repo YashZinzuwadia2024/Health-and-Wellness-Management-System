@@ -21,7 +21,7 @@ const authenticateToken = (req, res, next) => {
             });
             if (!user_activity || user_activity.logged_in === 0) {
                 res.clearCookie("token");
-                return res.redirect("/")
+                return res.redirect("/");
             };
             req.user = user;
             return next();

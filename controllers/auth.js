@@ -1,7 +1,7 @@
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const db = require("../models/index");
-const { addToBlacklist, tokenBlacklist } = require("../tokens/tokens");
+const { Op } = require("sequelize");
 
 module.exports = {
     registerUser: async (req, res) => {
@@ -41,6 +41,7 @@ module.exports = {
             if (!user) return res.status(400).json({ message: "Bad Request!" });
             const passCheck = await bcrypt.compare(password, user.password);
             if (!passCheck) return res.status(400).json({ success: false, message: "Invalid Email Or Password!" });
+            delete user.password;
             const token = jwt.sign(user, process.env.SECRET_KEY, {
                 expiresIn: '1h'
             });
@@ -63,9 +64,17 @@ module.exports = {
     },
     userLogout: async (req, res) => {
         try {
-            const token = req.header('Authorization')?.split(' ')[1];
-            addToBlacklist(token);
-            res.clearCookie("token");
+            const { user } = req;
+            await db.user_tokens.update({ logged_in: 0 }, {
+                where: {
+                    user_id: user.id,
+                    device_IP: req.socket.remoteAddress,
+                    token: req.cookies.token
+                },
+                attributes: ['id', 'token', 'logged_in'],
+                order: [['id', 'DESC']]
+            });
+            // res.clearCookie("token");
             return res.redirect("/");
         } catch (error) {
             console.log(error);
@@ -74,24 +83,17 @@ module.exports = {
     },
     logOutFromOthers: async (req, res) => {
         try {
-            const user = await db.users.findOne({
+            const { user } = req;
+            await db.user_tokens.update({ logged_in: 0 }, {
                 where: {
-                    id: req.user.id
-                }
+                    user_id: user.id,
+                    device_IP: {
+                        [Op.ne]: req.socket.remoteAddress
+                    }
+                },
+                attributes: ['id', 'token', 'logged_in'],
+                order: [['id', 'DESC']]
             });
-            const currentToken = req.cookies.token;
-            user.tokenVersion += 1;
-            await user.save();
-            addToBlacklist(currentToken);
-            const newToken = jwt.sign(user.dataValues, process.env.SECRET_KEY, {
-                expiresIn: '1h'
-            });
-            res.cookie('token', newToken, {
-                httpOnly: true,
-                sameSite: 'strict',
-                maxAge: 60 * 60 * 1000
-            });
-            tokenBlacklist.delete(currentToken);
             return res.status(200).redirect("/");
         } catch (error) {
             console.log(error);
@@ -100,14 +102,14 @@ module.exports = {
     },
     logOutFromAll: async (req, res) => {
         try {
-            const user = await db.users.findOne({
+            const { user } = req;
+            await db.user_tokens.update({ logged_in: 0 }, {
                 where: {
-                    id: req.user.id
-                }
+                    user_id: user.id
+                },
+                attributes: ['id', 'token', 'logged_in'],
+                order: [['id', 'DESC']]
             });
-            user.tokenVersion += 1;
-            await user.save();
-            res.clearCookie("token");
             return res.status(204).redirect("/");
         } catch (error) {
             console.log(error);

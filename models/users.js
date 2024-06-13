@@ -40,11 +40,6 @@ module.exports = (sequelize, DataTypes) => {
     password: {
       type: DataTypes.STRING,
       allowNull: false
-    },
-    tokenVersion: {
-      allowNull: false,
-      type: DataTypes.INTEGER,
-      defaultValue: 0
     }
   }, {
     sequelize: sequelize,
